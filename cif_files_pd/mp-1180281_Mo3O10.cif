@@ -1,0 +1,53 @@
+CIF file written using JARVIS-Tools package.
+data_Mo3O10
+_symmetry_space_group_name_H-M  'Aea2'
+_cell_length_a       7.74172
+_cell_length_b       7.74173
+_cell_length_c       7.26077
+_cell_angle_alpha    90
+_cell_angle_beta     90
+_cell_angle_gamma    118.499
+
+_symmetry_Int_Tables_number  41
+_chemical_formula_structural  Mo3O10
+_chemical_formula_sum  Mo6O20
+_cell_volume  382.4387348951344
+_cell_formula_units_Z  2
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Mo  Mo1  1  0.99395  0.00605  0.50000  1
+ Mo  Mo2  1  0.49395  0.50605  0.00000  1
+ Mo  Mo3  1  0.29775  0.79094  0.74456  1
+ Mo  Mo4  1  0.20906  0.70225  0.25544  1
+ Mo  Mo5  1  0.79775  0.29094  0.75544  1
+ Mo  Mo6  1  0.70906  0.20225  0.24456  1
+ O  O1  1  0.09683  0.84873  0.30909  1
+ O  O2  1  0.15127  0.90317  0.69091  1
+ O  O3  1  0.59683  0.34873  0.19091  1
+ O  O4  1  0.65127  0.40317  0.80909  1
+ O  O5  1  0.90263  0.08884  0.68493  1
+ O  O6  1  0.91116  0.09737  0.31507  1
+ O  O7  1  0.76351  0.67576  0.99820  1
+ O  O8  1  0.41116  0.59737  0.18493  1
+ O  O9  1  0.40263  0.58884  0.81507  1
+ O  O10  1  0.00510  0.47165  0.24787  1
+ O  O11  1  0.52835  0.99490  0.75213  1
+ O  O12  1  0.02835  0.49490  0.74787  1
+ O  O13  1  0.29693  0.70307  0.50000  1
+ O  O14  1  0.79693  0.20307  0.00000  1
+ O  O15  1  0.73724  0.26276  0.50000  1
+ O  O16  1  0.23724  0.76276  0.00000  1
+ O  O17  1  0.26351  0.17576  0.50180  1
+ O  O18  1  0.82424  0.73649  0.49820  1
+ O  O19  1  0.50510  0.97165  0.25213  1
+ O  O20  1  0.32424  0.23649  0.00180  1

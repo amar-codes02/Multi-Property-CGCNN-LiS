@@ -1,0 +1,37 @@
+CIF file written using JARVIS-Tools package.
+data_Ti2Te3
+_symmetry_space_group_name_H-M  'R-3'
+_cell_length_a       6.78806
+_cell_length_b       6.78799
+_cell_length_c       7.45016
+_cell_angle_alpha    62.899
+_cell_angle_beta     90.0005
+_cell_angle_gamma    119.999
+
+_symmetry_Int_Tables_number  148
+_chemical_formula_structural  Ti2Te3
+_chemical_formula_sum  Ti4Te6
+_cell_volume  252.8383529902181
+_cell_formula_units_Z  2
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Te  Te1  1  0.91029  0.47934  0.26188  1
+ Te  Te2  1  0.56907  0.82787  0.26187  1
+ Te  Te3  1  0.25879  0.16905  0.26184  1
+ Te  Te4  1  0.40788  0.16428  0.73816  1
+ Te  Te5  1  0.09760  0.50546  0.73813  1
+ Te  Te6  1  0.75638  0.85400  0.73812  1
+ Ti  Ti1  1  0.33333  0.66667  0.00000  1
+ Ti  Ti2  1  0.67326  0.34644  0.98042  1
+ Ti  Ti3  1  0.99341  0.98689  0.01958  1
+ Ti  Ti4  1  0.83333  0.66667  0.50000  1

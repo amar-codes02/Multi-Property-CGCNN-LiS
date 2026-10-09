@@ -1,0 +1,47 @@
+CIF file written using JARVIS-Tools package.
+data_Cr2O3
+_symmetry_space_group_name_H-M  'Pbcn'
+_cell_length_a       5.05404
+_cell_length_b       5.22091
+_cell_length_c       7.21877
+_cell_angle_alpha    90.0001
+_cell_angle_beta     89.9999
+_cell_angle_gamma    90.0001
+
+_symmetry_Int_Tables_number  60
+_chemical_formula_structural  Cr2O3
+_chemical_formula_sum  Cr8O12
+_cell_volume  190.47960027172405
+_cell_formula_units_Z  4
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Cr  Cr1  1  0.24983  0.03207  0.39236  1
+ Cr  Cr2  1  0.25017  0.96793  0.89236  1
+ Cr  Cr3  1  0.74983  0.46793  0.89237  1
+ Cr  Cr4  1  0.75018  0.53207  0.39237  1
+ Cr  Cr5  1  0.24983  0.46792  0.60764  1
+ Cr  Cr6  1  0.25017  0.53207  0.10763  1
+ Cr  Cr7  1  0.74983  0.03208  0.10764  1
+ Cr  Cr8  1  0.75017  0.96792  0.60763  1
+ O  O1  1  0.05002  0.25000  0.00000  1
+ O  O2  1  0.89241  0.60591  0.65166  1
+ O  O3  1  0.55002  0.25000  0.50000  1
+ O  O4  1  0.94998  0.75000  0.00000  1
+ O  O5  1  0.44998  0.75000  0.50000  1
+ O  O6  1  0.60759  0.39409  0.15167  1
+ O  O7  1  0.39241  0.60591  0.84834  1
+ O  O8  1  0.39241  0.89409  0.15167  1
+ O  O9  1  0.10759  0.39409  0.34834  1
+ O  O10  1  0.60759  0.10591  0.84834  1
+ O  O11  1  0.10759  0.10591  0.65166  1
+ O  O12  1  0.89241  0.89409  0.34834  1

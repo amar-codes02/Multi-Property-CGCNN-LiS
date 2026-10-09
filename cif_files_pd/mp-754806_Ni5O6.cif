@@ -1,0 +1,38 @@
+CIF file written using JARVIS-Tools package.
+data_Ni5O6
+_symmetry_space_group_name_H-M  'C2/m'
+_cell_length_a       5.20181
+_cell_length_b       5.09807
+_cell_length_c       5.09718
+_cell_angle_alpha    118.176
+_cell_angle_beta     79.0837
+_cell_angle_gamma    79.1072
+
+_symmetry_Int_Tables_number  12
+_chemical_formula_structural  Ni5O6
+_chemical_formula_sum  Ni5O6
+_cell_volume  110.78278146143919
+_cell_formula_units_Z  1
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Ni  Ni1  1  0.00000  0.66667  0.33333  1
+ Ni  Ni2  1  0.00023  0.00569  0.99442  1
+ Ni  Ni3  1  0.49995  0.83668  0.16364  1
+ Ni  Ni4  1  0.50005  0.49666  0.50303  1
+ Ni  Ni5  1  0.99977  0.32764  0.67225  1
+ O  O1  1  0.23349  0.26382  0.29924  1
+ O  O2  1  0.21480  0.92297  0.58949  1
+ O  O3  1  0.23363  0.63271  0.93043  1
+ O  O4  1  0.76651  0.06952  0.36743  1
+ O  O5  1  0.78520  0.41036  0.07718  1
+ O  O6  1  0.76637  0.70062  0.73624  1

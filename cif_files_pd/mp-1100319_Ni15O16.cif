@@ -1,0 +1,58 @@
+CIF file written using JARVIS-Tools package.
+data_Ni15O16
+_symmetry_space_group_name_H-M  'C2/m'
+_cell_length_a       5.9113
+_cell_length_b       12.1677
+_cell_length_c       5.89095
+_cell_angle_alpha    118.949
+_cell_angle_beta     119.885
+_cell_angle_gamma    90.2659
+
+_symmetry_Int_Tables_number  12
+_chemical_formula_structural  Ni15O16
+_chemical_formula_sum  Ni15O16
+_cell_volume  304.13189208944215
+_cell_formula_units_Z  1
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Ni  Ni1  1  0.00155  0.49922  0.49850  1
+ Ni  Ni2  1  0.00000  0.25000  0.00000  1
+ Ni  Ni3  1  0.64570  0.22126  0.29412  1
+ Ni  Ni4  1  0.51009  0.51655  0.02157  1
+ Ni  Ni5  1  0.48991  0.98345  0.97843  1
+ Ni  Ni6  1  0.50084  0.00082  0.50121  1
+ Ni  Ni7  1  0.50000  0.75000  0.50000  1
+ Ni  Ni8  1  0.50000  0.75000  0.00000  1
+ Ni  Ni9  1  0.35430  0.27874  0.70588  1
+ Ni  Ni10  1  0.00000  0.75000  0.00000  1
+ Ni  Ni11  1  0.00145  0.49925  1.00141  1
+ Ni  Ni12  1  0.99855  0.00075  -0.00141  1
+ Ni  Ni13  1  0.99845  0.00078  0.50150  1
+ Ni  Ni14  1  0.00000  0.75000  0.50000  1
+ Ni  Ni15  1  0.49916  0.49918  0.49879  1
+ O  O1  1  0.77459  0.40689  0.54413  1
+ O  O2  1  0.76116  0.38711  0.01769  1
+ O  O3  1  0.74286  0.11351  0.98230  1
+ O  O4  1  0.75568  0.63265  0.50801  1
+ O  O5  1  0.74286  0.11346  0.48754  1
+ O  O6  1  0.74939  0.87438  0.49910  1
+ O  O7  1  0.24461  0.86753  0.98777  1
+ O  O8  1  0.22541  0.09311  0.45587  1
+ O  O9  1  0.25565  0.63170  0.00954  1
+ O  O10  1  0.23884  0.11289  0.98231  1
+ O  O11  1  0.24432  0.86735  0.49199  1
+ O  O12  1  0.25061  0.62562  0.50090  1
+ O  O13  1  0.25714  0.38654  0.51246  1
+ O  O14  1  0.75539  0.63247  0.01223  1
+ O  O15  1  0.25714  0.38649  0.01770  1
+ O  O16  1  0.74435  0.86830  0.99046  1

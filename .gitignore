@@ -1,0 +1,20 @@
+# Python & Jupyter
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Large DFT wavefunctions and HPC logs
+*.gpw
+*.gpw.txt
+dft_gpaw_graphene_tpms_testing/
+dft/
+*.log
+sync.log
+results_backup_pw/
+
+# System and IDE
+.DS_Store
+.vscode/
+.idea/

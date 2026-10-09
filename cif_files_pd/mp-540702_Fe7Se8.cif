@@ -1,0 +1,72 @@
+CIF file written using JARVIS-Tools package.
+data_Fe7Se8
+_symmetry_space_group_name_H-M  'P3_121'
+_cell_length_a       7.26311
+_cell_length_b       7.26311
+_cell_length_c       16.0248
+_cell_angle_alpha    90
+_cell_angle_beta     90
+_cell_angle_gamma    120
+
+_symmetry_Int_Tables_number  152
+_chemical_formula_structural  Fe7Se8
+_chemical_formula_sum  Fe21Se24
+_cell_volume  732.0966856638365
+_cell_formula_units_Z  3
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Fe  Fe1  1  0.98674  0.98663  0.00004  1
+ Fe  Fe2  1  0.48080  0.48695  0.16282  1
+ Fe  Fe3  1  0.00615  0.51920  0.82949  1
+ Fe  Fe4  1  0.51305  0.99385  0.49615  1
+ Fe  Fe5  1  0.48698  0.48056  0.83721  1
+ Fe  Fe6  1  0.99358  0.51302  0.50388  1
+ Fe  Fe7  1  0.99977  0.47207  0.16672  1
+ Fe  Fe8  1  0.47230  0.00023  0.83339  1
+ Fe  Fe9  1  0.52793  0.52770  0.50006  1
+ Fe  Fe10  1  0.02965  0.00016  0.83333  1
+ Fe  Fe11  1  0.51944  0.00642  0.17055  1
+ Fe  Fe12  1  0.99984  0.02949  0.16667  1
+ Fe  Fe13  1  0.51693  0.00322  0.66208  1
+ Fe  Fe14  1  0.48629  0.48307  0.32874  1
+ Fe  Fe15  1  0.99678  0.51371  0.99541  1
+ Fe  Fe16  1  0.48328  0.48715  0.67130  1
+ Fe  Fe17  1  0.00387  0.51672  0.33796  1
+ Fe  Fe18  1  0.51285  0.99613  0.00463  1
+ Fe  Fe19  1  0.99989  0.01326  0.66670  1
+ Fe  Fe20  1  0.01337  0.00011  0.33337  1
+ Fe  Fe21  1  0.97051  0.97035  0.50000  1
+ Se  Se1  1  0.82890  0.16860  0.90796  1
+ Se  Se2  1  0.83140  0.66030  0.24129  1
+ Se  Se3  1  0.34227  0.16654  0.92380  1
+ Se  Se4  1  0.83346  0.17573  0.25714  1
+ Se  Se5  1  0.32667  0.66246  0.24584  1
+ Se  Se6  1  0.67334  0.33588  0.08738  1
+ Se  Se7  1  0.66412  0.33746  0.42071  1
+ Se  Se8  1  0.66254  0.32666  0.75404  1
+ Se  Se9  1  0.33970  0.17110  0.57462  1
+ Se  Se10  1  0.82427  0.65773  0.59047  1
+ Se  Se11  1  0.82471  0.66267  0.91108  1
+ Se  Se12  1  0.65762  0.82413  0.40963  1
+ Se  Se13  1  0.33733  0.16203  0.24441  1
+ Se  Se14  1  0.17548  0.83796  0.42225  1
+ Se  Se15  1  0.66248  0.82452  0.08891  1
+ Se  Se16  1  0.16204  0.33752  0.75558  1
+ Se  Se17  1  0.16847  0.82890  0.09223  1
+ Se  Se18  1  0.66044  0.83153  0.75890  1
+ Se  Se19  1  0.17110  0.33956  0.42557  1
+ Se  Se20  1  0.17587  0.83349  0.74296  1
+ Se  Se21  1  0.33754  0.66420  0.57918  1
+ Se  Se22  1  0.16651  0.34238  0.07629  1
+ Se  Se23  1  0.83797  0.17529  0.57775  1
+ Se  Se24  1  0.33580  0.67333  0.91251  1

@@ -1,0 +1,41 @@
+CIF file written using JARVIS-Tools package.
+data_W2O5
+_symmetry_space_group_name_H-M  'P2'
+_cell_length_a       5.92844
+_cell_length_b       10.3393
+_cell_length_c       3.69045
+_cell_angle_alpha    89.9999
+_cell_angle_beta     89.9997
+_cell_angle_gamma    89.9602
+
+_symmetry_Int_Tables_number  3
+_chemical_formula_structural  W2O5
+_chemical_formula_sum  W4O10
+_cell_volume  226.20951163604371
+_cell_formula_units_Z  2
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ O  O1  1  0.80313  0.40763  0.49824  1
+ O  O2  1  0.19687  0.59237  0.49827  1
+ O  O3  1  0.30316  0.09220  0.49804  1
+ O  O4  1  0.69684  0.90780  0.49806  1
+ O  O5  1  0.04161  0.27665  0.98702  1
+ O  O6  1  0.95839  0.72334  0.98705  1
+ O  O7  1  0.54237  0.22371  0.98688  1
+ O  O8  1  0.45763  0.77629  0.98690  1
+ O  O9  1  0.49999  0.50000  0.00449  1
+ O  O10  1  0.00001  -0.00000  0.00471  1
+ W  W1  1  0.72844  0.36647  0.01233  1
+ W  W2  1  0.27155  0.63354  0.01235  1
+ W  W3  1  0.22882  0.13293  0.01281  1
+ W  W4  1  0.77118  0.86707  0.01284  1

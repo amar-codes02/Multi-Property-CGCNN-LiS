@@ -1,0 +1,47 @@
+CIF file written using JARVIS-Tools package.
+data_NiP4
+_symmetry_space_group_name_H-M  'P1'
+_cell_length_a       5.20631
+_cell_length_b       5.90323
+_cell_length_c       11.3313
+_cell_angle_alpha    88.5198
+_cell_angle_beta     93.2789
+_cell_angle_gamma    116.083
+
+_symmetry_Int_Tables_number  1
+_chemical_formula_structural  NiP4
+_chemical_formula_sum  Ni4P16
+_cell_volume  312.27624704985766
+_cell_formula_units_Z  4
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Ni  Ni1  1  0.99484  0.49983  0.00114  1
+ Ni  Ni2  1  0.07783  0.15558  0.25019  1
+ Ni  Ni3  1  0.49874  0.49985  0.50017  1
+ Ni  Ni4  1  0.92023  0.84013  0.74997  1
+ P  P1  1  0.66418  0.20248  0.52380  1
+ P  P2  1  0.95280  0.81803  0.54676  1
+ P  P3  1  0.85854  0.81666  0.95287  1
+ P  P4  1  0.53209  0.20192  0.97609  1
+ P  P5  1  0.54608  0.47843  0.29021  1
+ P  P6  1  0.37385  0.13852  0.78428  1
+ P  P7  1  0.62377  0.85636  0.21517  1
+ P  P8  1  0.45817  0.79699  0.02358  1
+ P  P9  1  0.76770  0.14028  0.71468  1
+ P  P10  1  0.13348  0.18236  0.04661  1
+ P  P11  1  0.04396  0.18336  0.45298  1
+ P  P12  1  0.33181  0.79793  0.47733  1
+ P  P13  1  0.23228  0.85745  0.28586  1
+ P  P14  1  0.06663  0.51886  0.78999  1
+ P  P15  1  0.45147  0.51847  0.71141  1
+ P  P16  1  0.93066  0.47744  0.21254  1

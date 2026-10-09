@@ -1,0 +1,42 @@
+CIF file written using JARVIS-Tools package.
+data_V7S8
+_symmetry_space_group_name_H-M  'P-1'
+_cell_length_a       6.75731
+_cell_length_b       6.51384
+_cell_length_c       6.79359
+_cell_angle_alpha    75.3661
+_cell_angle_beta     57.3918
+_cell_angle_gamma    103.712
+
+_symmetry_Int_Tables_number  2
+_chemical_formula_structural  V7S8
+_chemical_formula_sum  V7S8
+_cell_volume  216.67217911476843
+_cell_formula_units_Z  1
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ S  S1  1  0.30415  0.33637  0.95885  1
+ S  S2  1  0.78672  0.33216  0.45227  1
+ S  S3  1  0.28321  0.83281  0.95002  1
+ S  S4  1  0.79526  0.81988  0.47670  1
+ S  S5  1  0.70474  0.18012  0.02330  1
+ S  S6  1  0.21679  0.16719  0.54998  1
+ S  S7  1  0.71328  0.66784  0.04773  1
+ S  S8  1  0.19585  0.66363  0.54115  1
+ V  V1  1  -0.03249  0.01509  0.03674  1
+ V  V2  1  0.53249  0.98491  0.46326  1
+ V  V3  1  0.00902  0.47487  -0.01755  1
+ V  V4  1  0.49098  0.52513  0.51755  1
+ V  V5  1  0.25000  0.00000  0.25000  1
+ V  V6  1  0.75000  0.00000  0.75000  1
+ V  V7  1  0.25000  0.50000  0.25000  1

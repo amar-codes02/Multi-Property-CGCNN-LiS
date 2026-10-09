@@ -1,0 +1,46 @@
+CIF file written using JARVIS-Tools package.
+data_Ni9S10
+_symmetry_space_group_name_H-M  'P-1'
+_cell_length_a       5.94882
+_cell_length_b       7.79252
+_cell_length_c       6.13864
+_cell_angle_alpha    79.6985
+_cell_angle_beta     90.9361
+_cell_angle_gamma    68.8548
+
+_symmetry_Int_Tables_number  2
+_chemical_formula_structural  Ni9S10
+_chemical_formula_sum  Ni9S10
+_cell_volume  260.11109481091256
+_cell_formula_units_Z  1
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Ni  Ni1  1  0.38672  0.21167  0.82086  1
+ Ni  Ni2  1  0.48644  0.01376  0.49696  1
+ Ni  Ni3  1  0.70289  0.58697  0.91132  1
+ Ni  Ni4  1  0.89705  0.21303  0.28852  1
+ Ni  Ni5  1  0.79986  0.40006  0.59993  1
+ Ni  Ni6  1  0.98411  0.99919  0.99615  1
+ Ni  Ni7  1  0.11356  0.78634  0.70317  1
+ Ni  Ni8  1  0.21327  0.58819  0.37914  1
+ Ni  Ni9  1  0.61628  0.80086  0.20402  1
+ S  S1  1  0.82328  0.70135  0.55311  1
+ S  S2  1  0.58906  0.50855  0.25231  1
+ S  S3  1  0.38200  0.90313  0.85191  1
+ S  S4  1  0.42298  0.49684  0.73576  1
+ S  S5  1  0.77671  0.09862  0.64690  1
+ S  S6  1  0.17709  0.30313  0.46417  1
+ S  S7  1  0.01088  0.29139  0.94759  1
+ S  S8  1  0.98676  0.69782  0.04814  1
+ S  S9  1  0.61329  0.10218  0.15207  1
+ S  S10  1  0.21810  0.89683  0.34806  1

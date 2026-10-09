@@ -1,0 +1,38 @@
+CIF file written using JARVIS-Tools package.
+data_Co5Te6
+_symmetry_space_group_name_H-M  'R-3'
+_cell_length_a       6.63009
+_cell_length_b       6.63008
+_cell_length_c       6.63008
+_cell_angle_alpha    61.08
+_cell_angle_beta     61.08
+_cell_angle_gamma    61.08
+
+_symmetry_Int_Tables_number  148
+_chemical_formula_structural  Co5Te6
+_chemical_formula_sum  Co5Te6
+_cell_volume  211.09356654433202
+_cell_formula_units_Z  1
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Co  Co1  1  0.83803  0.83803  0.83803  1
+ Co  Co2  1  0.50000  0.50000  0.50000  1
+ Co  Co3  1  0.16197  0.16197  0.16197  1
+ Co  Co4  1  0.66661  0.66661  0.66661  1
+ Co  Co5  1  0.33339  0.33339  0.33339  1
+ Te  Te1  1  0.08179  0.42263  0.75134  1
+ Te  Te2  1  0.75134  0.08179  0.42263  1
+ Te  Te3  1  0.42263  0.75134  0.08179  1
+ Te  Te4  1  0.91821  0.57737  0.24866  1
+ Te  Te5  1  0.57737  0.24866  0.91821  1
+ Te  Te6  1  0.24866  0.91821  0.57737  1

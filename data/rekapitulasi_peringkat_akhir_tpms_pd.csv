@@ -1,0 +1,6 @@
+Rank,Topology,Composite_Score,Adsorption energy (eV),Formation energy (eV/atom),Band gap (eV),Bulk modulus (GPa),Shear modulus (GPa),Packing_Fraction,Volume (A^3)
+#1,Diamond,80.55633968478007,3.25,-0.293,0.0,182.1,94.69,0.23,2762.69
+#2,Gyroid,79.62255072645767,3.425,-0.21,0.0,168.4,87.57,0.185,2527.53
+#3,IWP,54.54029331023958,3.12,-0.381,0.0,152.6,79.35,0.217,2013.01
+#4,Neovius,39.371382457702566,2.88,-0.549,0.0,145.2,75.5,0.197,1829.06
+#5,Primitive,26.422018348623862,2.98,-0.081,0.0,138.9,72.23,0.124,3092.51

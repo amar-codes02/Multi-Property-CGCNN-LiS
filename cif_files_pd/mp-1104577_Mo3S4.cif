@@ -1,0 +1,41 @@
+CIF file written using JARVIS-Tools package.
+data_Mo3S4
+_symmetry_space_group_name_H-M  'P-1'
+_cell_length_a       6.39419
+_cell_length_b       6.65523
+_cell_length_c       6.85957
+_cell_angle_alpha    104.092
+_cell_angle_beta     117.506
+_cell_angle_gamma    103.949
+
+_symmetry_Int_Tables_number  2
+_chemical_formula_structural  Mo3S4
+_chemical_formula_sum  Mo6S8
+_cell_volume  228.9384607252014
+_cell_formula_units_Z  2
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Mo  Mo1  1  0.71275  0.99789  0.49553  1
+ Mo  Mo2  1  0.28725  0.00211  0.50447  1
+ Mo  Mo3  1  0.55125  0.51766  0.82195  1
+ Mo  Mo4  1  0.44875  0.48234  0.17805  1
+ Mo  Mo5  1  0.02121  0.51342  0.80805  1
+ Mo  Mo6  1  0.97879  0.48658  0.19195  1
+ S  S1  1  0.46656  0.78567  0.04984  1
+ S  S2  1  0.53344  0.21433  0.95016  1
+ S  S3  1  0.94634  0.73415  0.52735  1
+ S  S4  1  0.05366  0.26585  0.47265  1
+ S  S5  1  0.01382  0.20373  0.93431  1
+ S  S6  1  0.98618  0.79627  0.06569  1
+ S  S7  1  0.55526  0.28785  0.46771  1
+ S  S8  1  0.44474  0.71215  0.53229  1

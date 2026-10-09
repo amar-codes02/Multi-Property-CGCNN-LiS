@@ -1,0 +1,40 @@
+CIF file written using JARVIS-Tools package.
+data_Ti5Te8
+_symmetry_space_group_name_H-M  'C2/m'
+_cell_length_a       7.49757
+_cell_length_b       7.49758
+_cell_length_c       9.26135
+_cell_angle_alpha    54.1582
+_cell_angle_beta     54.1581
+_cell_angle_gamma    62.8546
+
+_symmetry_Int_Tables_number  12
+_chemical_formula_structural  Ti5Te8
+_chemical_formula_sum  Ti5Te8
+_cell_volume  336.98126702323475
+_cell_formula_units_Z  1
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Te  Te1  1  0.44986  0.44986  0.33047  1
+ Te  Te2  1  0.55014  0.55014  0.66953  1
+ Te  Te3  1  0.53726  0.05327  0.17133  1
+ Te  Te4  1  0.46274  0.94673  0.82867  1
+ Te  Te5  1  0.94673  0.46274  0.82867  1
+ Te  Te6  1  0.05327  0.53726  0.17133  1
+ Te  Te7  1  0.95807  0.95807  0.33715  1
+ Te  Te8  1  0.04193  0.04193  0.66285  1
+ Ti  Ti1  1  0.72751  0.27249  0.50000  1
+ Ti  Ti2  1  0.27249  0.72751  0.50000  1
+ Ti  Ti3  1  0.74797  0.74797  0.01832  1
+ Ti  Ti4  1  0.25203  0.25203  0.98168  1
+ Ti  Ti5  1  0.00000  0.00000  0.00000  1

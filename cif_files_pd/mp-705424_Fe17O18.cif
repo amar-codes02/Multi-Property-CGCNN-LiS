@@ -1,0 +1,62 @@
+CIF file written using JARVIS-Tools package.
+data_Fe17O18
+_symmetry_space_group_name_H-M  'P-1'
+_cell_length_a       9.30408
+_cell_length_b       11.1052
+_cell_length_c       8.23081
+_cell_angle_alpha    37.8427
+_cell_angle_beta     55.2179
+_cell_angle_gamma    46.5327
+
+_symmetry_Int_Tables_number  2
+_chemical_formula_structural  Fe17O18
+_chemical_formula_sum  Fe17O18
+_cell_volume  377.9556958362778
+_cell_formula_units_Z  1
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Fe  Fe1  1  0.22589  0.32911  0.00031  1
+ Fe  Fe2  1  0.72856  0.84285  0.48164  1
+ Fe  Fe3  1  0.67604  0.99786  0.99944  1
+ Fe  Fe4  1  0.83897  0.48275  0.51442  1
+ Fe  Fe5  1  0.39274  0.83247  0.49206  1
+ Fe  Fe6  1  0.94648  0.16722  0.50276  1
+ Fe  Fe7  1  0.32396  0.00214  0.00056  1
+ Fe  Fe8  1  0.50000  0.50000  0.50000  1
+ Fe  Fe9  1  0.77411  0.67089  -0.00031  1
+ Fe  Fe10  1  0.05352  0.83278  0.49724  1
+ Fe  Fe11  1  0.43743  0.67526  -0.00644  1
+ Fe  Fe12  1  0.60726  0.16753  0.50794  1
+ Fe  Fe13  1  0.16103  0.51725  0.48558  1
+ Fe  Fe14  1  0.56257  0.32474  0.00644  1
+ Fe  Fe15  1  0.10526  0.67437  0.00240  1
+ Fe  Fe16  1  0.27144  0.15715  0.51836  1
+ Fe  Fe17  1  0.89474  0.32563  -0.00240  1
+ O  O1  1  0.29053  0.60034  0.75033  1
+ O  O2  1  0.52653  0.92525  0.74271  1
+ O  O3  1  0.92079  0.72705  0.25439  1
+ O  O4  1  0.64958  0.57722  0.76646  1
+ O  O5  1  0.72416  0.27383  0.73727  1
+ O  O6  1  0.19390  0.91232  0.74098  1
+ O  O7  1  0.58891  0.75477  0.23732  1
+ O  O8  1  0.70947  0.39966  0.24967  1
+ O  O9  1  0.12195  0.09703  0.23709  1
+ O  O10  1  0.27584  0.72617  0.26273  1
+ O  O11  1  0.41109  0.24523  0.76268  1
+ O  O12  1  0.35042  0.42278  0.23354  1
+ O  O13  1  0.07921  0.27295  0.74561  1
+ O  O14  1  0.47347  0.07475  0.25729  1
+ O  O15  1  0.03832  0.42241  0.23337  1
+ O  O16  1  0.96168  0.57759  0.76663  1
+ O  O17  1  0.80610  0.08768  0.25902  1
+ O  O18  1  0.87805  0.90297  0.76291  1

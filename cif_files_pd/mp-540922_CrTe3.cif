@@ -1,0 +1,59 @@
+CIF file written using JARVIS-Tools package.
+data_CrTe3
+_symmetry_space_group_name_H-M  'P2_1/c'
+_cell_length_a       8.19387
+_cell_length_b       10.7115
+_cell_length_c       11.4778
+_cell_angle_alpha    90
+_cell_angle_beta     90
+_cell_angle_gamma    105.061
+
+_symmetry_Int_Tables_number  14
+_chemical_formula_structural  CrTe3
+_chemical_formula_sum  Te24Cr8
+_cell_volume  972.785799081624
+_cell_formula_units_Z  8
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Cr  Cr1  1  0.98547  0.00726  0.21624  1
+ Cr  Cr2  1  0.01453  0.99274  0.78376  1
+ Cr  Cr3  1  0.48547  0.50726  0.28376  1
+ Cr  Cr4  1  0.17224  0.17439  0.49962  1
+ Cr  Cr5  1  0.32776  0.32561  0.99962  1
+ Cr  Cr6  1  0.82776  0.82561  0.50038  1
+ Cr  Cr7  1  0.67224  0.67439  0.00038  1
+ Cr  Cr8  1  0.51453  0.49274  0.71624  1
+ Te  Te1  1  0.03274  0.22990  0.88170  1
+ Te  Te2  1  0.46726  0.27010  0.38170  1
+ Te  Te3  1  0.96726  0.77010  0.11830  1
+ Te  Te4  1  0.53274  0.72990  0.61830  1
+ Te  Te5  1  0.80031  0.09736  0.05403  1
+ Te  Te6  1  0.69969  0.40264  0.55403  1
+ Te  Te7  1  0.19969  0.90264  0.94597  1
+ Te  Te8  1  0.30031  0.59736  0.44597  1
+ Te  Te9  1  0.35911  0.56712  0.90647  1
+ Te  Te10  1  0.30091  0.10023  0.11827  1
+ Te  Te11  1  0.19909  0.39977  0.61827  1
+ Te  Te12  1  0.67846  0.93049  0.32778  1
+ Te  Te13  1  0.82154  0.56951  0.82778  1
+ Te  Te14  1  0.32154  0.06951  0.67222  1
+ Te  Te15  1  0.17846  0.43049  0.17222  1
+ Te  Te16  1  0.48280  0.73529  0.17553  1
+ Te  Te17  1  0.01720  0.76471  0.67553  1
+ Te  Te18  1  0.51720  0.26471  0.82447  1
+ Te  Te19  1  0.98280  0.23529  0.32447  1
+ Te  Te20  1  0.85911  0.06712  0.59353  1
+ Te  Te21  1  0.64089  0.43288  0.09353  1
+ Te  Te22  1  0.14089  0.93288  0.40647  1
+ Te  Te23  1  0.80091  0.60023  0.38173  1
+ Te  Te24  1  0.69909  0.89977  0.88173  1

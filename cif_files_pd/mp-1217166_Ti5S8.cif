@@ -1,0 +1,40 @@
+CIF file written using JARVIS-Tools package.
+data_Ti5S8
+_symmetry_space_group_name_H-M  'Cm'
+_cell_length_a       12.0879
+_cell_length_b       12.0879
+_cell_length_c       5.94838
+_cell_angle_alpha    76.4178
+_cell_angle_beta     76.4178
+_cell_angle_gamma    16.2829
+
+_symmetry_Int_Tables_number  8
+_chemical_formula_structural  Ti5S8
+_chemical_formula_sum  Ti5S8
+_cell_volume  236.73855502446224
+_cell_formula_units_Z  1
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ S  S1  1  0.31207  0.31207  0.67296  1
+ S  S2  1  0.81213  0.81213  0.19424  1
+ S  S3  1  0.06350  0.06350  0.93641  1
+ S  S4  1  0.56676  0.56676  0.43427  1
+ S  S5  1  0.43748  0.43748  0.22776  1
+ S  S6  1  0.93554  0.93554  0.73288  1
+ S  S7  1  0.68943  0.68943  0.65054  1
+ S  S8  1  0.19055  0.19055  0.14892  1
+ Ti  Ti1  1  0.75742  0.75742  0.91154  1
+ Ti  Ti2  1  0.62430  0.62430  0.03794  1
+ Ti  Ti3  1  0.12495  0.12495  0.55363  1
+ Ti  Ti4  1  0.37468  0.37468  0.95419  1
+ Ti  Ti5  1  0.87811  0.87811  0.44938  1

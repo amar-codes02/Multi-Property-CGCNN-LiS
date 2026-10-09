@@ -1,0 +1,16 @@
+Subset,Properti Target,R² Score,MAE,RMSE,Max Error,90th %ile Err
+Train Set (1092),Formation energy (Ef) [eV/atom],0.956,0.1593,0.2002,0.7825,0.3292
+Train Set (1092),Band gap (Eg) [eV],0.9499,0.1061,0.1568,0.6006,0.2769
+Train Set (1092),Adsorption energy (Eads) [eV],0.942,0.2329,0.2897,1.0665,0.4708
+Train Set (1092),Bulk modulus (K) [GPa],0.952,13.6063,17.0112,55.4991,27.7765
+Train Set (1092),Shear modulus (G) [GPa],0.94,8.2089,10.4913,41.6151,17.5268
+Validation Set (137),Formation energy (Ef) [eV/atom],0.932,0.2046,0.2508,0.6954,0.3951
+Validation Set (137),Band gap (Eg) [eV],0.9435,0.0982,0.1484,0.4637,0.2559
+Validation Set (137),Adsorption energy (Eads) [eV],0.9154,0.2673,0.3478,0.98,0.5973
+Validation Set (137),Bulk modulus (K) [GPa],0.928,16.0614,20.4238,60.7569,33.5177
+Validation Set (137),Shear modulus (G) [GPa],0.918,9.1227,11.7561,35.2922,18.5202
+Test Set (137),Formation energy (Ef) [eV/atom],0.938,0.1776,0.2167,0.6189,0.3414
+Test Set (137),Band gap (Eg) [eV],0.9419,0.109,0.161,0.4538,0.2881
+Test Set (137),Adsorption energy (Eads) [eV],0.922,0.2688,0.3475,0.8904,0.5868
+Test Set (137),Bulk modulus (K) [GPa],0.935,14.6402,19.0408,65.439,34.1429
+Test Set (137),Shear modulus (G) [GPa],0.924,8.5252,10.7133,26.7396,16.7826

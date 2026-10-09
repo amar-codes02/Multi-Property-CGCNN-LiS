@@ -1,0 +1,42 @@
+CIF file written using JARVIS-Tools package.
+data_Cr7Te8
+_symmetry_space_group_name_H-M  'C2/m'
+_cell_length_a       7.45716
+_cell_length_b       7.45716
+_cell_length_c       9.36443
+_cell_angle_alpha    56.3643
+_cell_angle_beta     56.3644
+_cell_angle_gamma    66.1558
+
+_symmetry_Int_Tables_number  12
+_chemical_formula_structural  Cr7Te8
+_chemical_formula_sum  Cr7Te8
+_cell_volume  357.39056962708116
+_cell_formula_units_Z  1
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ Cr  Cr1  1  0.73147  0.26853  0.50000  1
+ Cr  Cr2  1  0.26853  0.73147  0.50000  1
+ Cr  Cr3  1  0.50000  -0.00000  0.50000  1
+ Cr  Cr4  1  0.00000  0.50000  0.50000  1
+ Cr  Cr5  1  0.73757  0.73757  0.00815  1
+ Cr  Cr6  1  0.26243  0.26243  0.99185  1
+ Cr  Cr7  1  0.00000  0.00000  0.00000  1
+ Te  Te1  1  0.96314  0.96314  0.33297  1
+ Te  Te2  1  0.03686  0.03686  0.66703  1
+ Te  Te3  1  0.54172  0.03472  0.16744  1
+ Te  Te4  1  0.45828  0.96528  0.83256  1
+ Te  Te5  1  0.96528  0.45828  0.83256  1
+ Te  Te6  1  0.03472  0.54172  0.16744  1
+ Te  Te7  1  0.45273  0.45273  0.33020  1
+ Te  Te8  1  0.54727  0.54727  0.66980  1

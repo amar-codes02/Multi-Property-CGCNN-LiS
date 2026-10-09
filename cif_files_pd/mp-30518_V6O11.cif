@@ -1,0 +1,61 @@
+CIF file written using JARVIS-Tools package.
+data_V6O11
+_symmetry_space_group_name_H-M  'P-1'
+_cell_length_a       5.57272
+_cell_length_b       7.09936
+_cell_length_c       9.77225
+_cell_angle_alpha    89.1404
+_cell_angle_beta     80.2774
+_cell_angle_gamma    71.7332
+
+_symmetry_Int_Tables_number  2
+_chemical_formula_structural  V6O11
+_chemical_formula_sum  O22V12
+_cell_volume  361.56398741062003
+_cell_formula_units_Z  2
+loop_
+  _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+ 1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_fract_occupancy
+ O  O1  1  0.10427  0.64896  0.46831  1
+ O  O2  1  0.00494  0.09678  0.10888  1
+ O  O3  1  0.66731  0.25526  0.78879  1
+ O  O4  1  0.81454  0.80313  0.14186  1
+ O  O5  1  0.18546  0.19687  0.85814  1
+ O  O6  1  0.33269  0.74474  0.21121  1
+ O  O7  1  0.51819  0.18138  0.06598  1
+ O  O8  1  0.48181  0.81861  0.93402  1
+ O  O9  1  0.79772  0.45144  0.02780  1
+ O  O10  1  0.20228  0.54856  0.97219  1
+ O  O11  1  0.94141  0.58163  0.75378  1
+ O  O12  1  0.99506  0.90322  0.89112  1
+ O  O13  1  0.44663  0.64160  0.70299  1
+ O  O14  1  0.55337  0.35840  0.29701  1
+ O  O15  1  0.63733  0.92070  0.65155  1
+ O  O16  1  0.36267  0.07930  0.34845  1
+ O  O17  1  0.12586  0.97947  0.60931  1
+ O  O18  1  0.87414  0.02053  0.39069  1
+ O  O19  1  0.40423  0.29984  0.57708  1
+ O  O20  1  0.59577  0.70016  0.42292  1
+ O  O21  1  0.89572  0.35104  0.53169  1
+ O  O22  1  0.05859  0.41837  0.24622  1
+ V  V1  1  0.82668  0.19837  0.93128  1
+ V  V2  1  0.17333  0.80163  0.06872  1
+ V  V3  1  0.29974  0.43284  0.76307  1
+ V  V4  1  0.70026  0.56716  0.23693  1
+ V  V5  1  0.30763  0.91888  0.74859  1
+ V  V6  1  0.22135  0.36664  0.41772  1
+ V  V7  1  0.75253  0.14394  0.58513  1
+ V  V8  1  0.24747  0.85606  0.41487  1
+ V  V9  1  0.77865  0.63336  0.58228  1
+ V  V10  1  0.18578  0.29890  0.06572  1
+ V  V11  1  0.69237  0.08112  0.25141  1
+ V  V12  1  0.81422  0.70110  0.93428  1
