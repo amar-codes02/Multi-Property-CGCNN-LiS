@@ -3,18 +3,26 @@
 MASTER PURE DFT GPAW RUNNER — 5 GRAPHENE TPMS & 5 POLYSULFIDES (S8 -> Li2S2)
 [VERSI SINGLE-POINT DIRECT SCF — TANPA RELAKSASI GEOMETRI]
 =============================================================================
-Struktur TPMS: Neovius (188 C), Primitive (200 C), IWP (228 C), Gyroid (244 C), Diamond (332 C)
-Adsorbat     : S8, Li2S8, Li2S6, Li2S4, Li2S2
-Target       : 1. Ground-State SCF (E_total, fmax, stress)
-               2. Band Gap & DOS
-               3. Formation Energy vs 2D Graphene
-               4. Adsorption Energy 5 Polysulfides (Eads = Ecplx - Ehost - Egas)
-               5. Bulk Modulus (K) & Shear Modulus (G)
-               6. Summary CSV & Publication Figures
+Struktur TPMS : Neovius (188 C), Primitive (200 C), IWP (228 C),
+                Gyroid (244 C), Diamond (332 C)
+Adsorbat      : S8, Li2S8, Li2S6, Li2S4, Li2S2
+Target        : 1. Ground-State SCF  → E_total, fmax
+                2. Band Gap & DOS    → gap_indirect, gap_direct
+                3. Formation Energy  → E_form_eV_atom (vs 2D Graphene)
+                4. Adsorption Energy → Eads per polysulfide
+                5. Bulk Modulus (K) & Shear Modulus (G) via EOS + shear strain
+
+Output Layout (relatif terhadap lokasi skrip ini):
+    <script_dir>/results/  ← semua data numerik (.json, .dat, .cif, .xlsx, .csv)
+    <script_dir>/figures/  ← semua grafik PNG (DOS, adsorpsi)
 """
 
-import os, sys, json, time
+import os
+import json
+import time
+import warnings
 from pathlib import Path
+
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -24,48 +32,54 @@ import pandas as pd
 from ase.io import read, write
 from ase.build import graphene
 from ase.units import GPa
-from ase.calculators.calculator import kptdensity2monkhorstpack
 from ase.dft.bandgap import bandgap
 from ase.dft.dos import DOS
-from ase import Atoms
 from gpaw import GPAW, PW, FermiDirac
 
-# ------------------------- DETEKSI DIREKTORI -------------------------
-SCRIPT_DIR = Path(__file__).resolve().parent
-RESULTS_DIR = SCRIPT_DIR / 'results'
-FIG_DIR = SCRIPT_DIR / 'figures'
-RESULTS_DIR.mkdir(exist_ok=True, parents=True)
-FIG_DIR.mkdir(exist_ok=True, parents=True)
-WORK = RESULTS_DIR
+warnings.filterwarnings('ignore')
 
-cif_cands = [
+# =============================================================================
+# DETEKSI DIREKTORI (otomatis: lokal & HPC)
+# =============================================================================
+SCRIPT_DIR  = Path(__file__).resolve().parent   # folder tempat skrip ini berada
+RESULTS_DIR = SCRIPT_DIR / 'results'            # → dft/results/
+FIG_DIR     = SCRIPT_DIR / 'figures'            # → dft/figures/
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+
+# Cari folder CIF pristine TPMS
+_cif_cands = [
     SCRIPT_DIR.parent / 'graphene_tpms',
     Path('/media/user/uid1083/graphene_tpms'),
     Path('/home/user/Amarus/cgcnn_data_multiproperty/graphene_tpms'),
     Path('graphene_tpms'),
-    Path('.')
 ]
-CIF_DIR = next((p for p in cif_cands if (p / 'graphene_sheet_neovius.cif').exists()), Path('.'))
+CIF_DIR = next((p for p in _cif_cands if (p / 'graphene_sheet_neovius.cif').exists()), None)
+if CIF_DIR is None:
+    raise FileNotFoundError("Folder graphene_tpms tidak ditemukan! Periksa path CIF_DIR.")
 
-ads_cands = [
+# Cari folder CIF adsorbat polysulfida
+_ads_cands = [
     SCRIPT_DIR.parent / 'cifs_graphene_tpms_adsorbate',
     Path('/media/user/uid1083/cifs_graphene_tpms_adsorbate'),
     Path('/home/user/Amarus/cgcnn_data_multiproperty/cifs_graphene_tpms_adsorbate'),
     Path('../cifs_graphene_tpms_adsorbate'),
     Path('cifs_graphene_tpms_adsorbate'),
-    Path('.')
 ]
-ADS_DIR = next((p for p in ads_cands if (p / 'graphene_neovius_S8.cif').exists()), Path('.'))
+ADS_DIR = next((p for p in _ads_cands if (p / 'graphene_neovius_S8.cif').exists()), None)
+if ADS_DIR is None:
+    raise FileNotFoundError("Folder cifs_graphene_tpms_adsorbate tidak ditemukan!")
 
-RES_FILE = WORK / 'results.json'
-RES = json.loads(RES_FILE.read_text()) if RES_FILE.exists() else {}
-def save_res():
-    RES_FILE.write_text(json.dumps(RES, indent=2))
-def rec(name):
-    return RES.setdefault(name, {})
+print(f"📂 CIF_DIR  : {CIF_DIR}")
+print(f"📂 ADS_DIR  : {ADS_DIR}")
+print(f"📂 RESULTS  : {RESULTS_DIR}")
+print(f"📂 FIGURES  : {FIG_DIR}")
 
-# ------------------------- PARAMETER FISIKA DFT -------------------------
+# =============================================================================
+# PARAMETER GLOBAL
+# =============================================================================
 POLYSULFIDES = ['S8', 'Li2S8', 'Li2S6', 'Li2S4', 'Li2S2']
+
 STRUCTS = {
     'neovius':   'graphene_sheet_neovius.cif',
     'primitive': 'graphene_sheet_primitive.cif',
@@ -75,391 +89,515 @@ STRUCTS = {
 }
 RUN = ['neovius', 'primitive', 'iwp', 'gyroid', 'diamond']
 
-# Mode: 'lcao' (ultra-cepat, ~20-30 menit) atau 'pw' (Plane-Wave)
-DFT_MODE = os.environ.get('DFT_MODE', 'lcao').lower()
-ECUT = 400
-XC = 'PBE'
-ELASTIC_DELTA = 0.005
-FORCE = False
+# Mode DFT: 'lcao' (cepat, ~20-60 menit/struktur) atau 'pw' (akurat, berjam-jam)
+DFT_MODE     = os.environ.get('DFT_MODE', 'lcao').lower()
+XC           = 'PBE'
+ECUT         = 400          # eV, hanya dipakai di mode 'pw'
+ELASTIC_DELTA = 0.02        # strain magnitude — 0.02 stabil untuk LCAO
+FORCE        = False         # True = hitung ulang meski sudah ada
 
-def make_calc(atoms, txt, kpts=None, molecule=False, spin=False):
+# =============================================================================
+# MANAJEMEN FILE HASIL (results.json)
+# =============================================================================
+RES_FILE = RESULTS_DIR / 'results.json'
+RES: dict = json.loads(RES_FILE.read_text()) if RES_FILE.exists() else {}
+
+def save_res() -> None:
+    """Simpan state RES ke results/results.json secara atomik."""
+    tmp = RES_FILE.with_suffix('.json.tmp')
+    tmp.write_text(json.dumps(RES, indent=2))
+    tmp.replace(RES_FILE)
+
+def rec(name: str) -> dict:
+    """Ambil/buat sub-dict hasil untuk struktur `name`."""
+    return RES.setdefault(name, {})
+
+# =============================================================================
+# PEMBUATAN KALKULATOR GPAW
+# =============================================================================
+def make_calc(atoms, log_path: Path, kpts=None, molecule: bool = False):
+    """
+    Buat kalkulator GPAW.
+    - kpts=None  → Gamma-point (1,1,1): cukup untuk sel TPMS besar >12Å
+    - molecule=True → smearing lebih ketat (FermiDirac 0.01 eV)
+    """
     if kpts is None:
-        # Sel TPMS >12 Å (>180 atom): Gamma-point (1,1,1) sangat akurat & cepat
         kpts = (1, 1, 1)
-        
-    if DFT_MODE == 'lcao':
-        return GPAW(mode='lcao', basis='dzp', xc=XC, kpts=kpts, spinpol=spin,
-                    occupations=FermiDirac(0.01 if molecule else 0.05),
-                    convergence={'energy': 1e-4, 'density': 1e-3}, txt=str(txt))
-    else:
-        return GPAW(mode=PW(ECUT), xc=XC, kpts=kpts, spinpol=spin,
-                    occupations=FermiDirac(0.01 if molecule else 0.05),
-                    convergence={'energy': 1e-5, 'density': 1e-4}, txt=str(txt))
 
-def load_initial(name):
+    common = dict(
+        xc=XC,
+        kpts=kpts,
+        occupations=FermiDirac(0.01 if molecule else 0.05),
+        txt=str(log_path),
+    )
+    if DFT_MODE == 'lcao':
+        return GPAW(mode='lcao', basis='dzp',
+                    convergence={'energy': 1e-4, 'density': 1e-3},
+                    **common)
+    else:
+        return GPAW(mode=PW(ECUT),
+                    convergence={'energy': 1e-5, 'density': 1e-4},
+                    **common)
+
+def load_cif(name: str):
+    """Baca CIF pristine TPMS."""
     return read(str(CIF_DIR / STRUCTS[name]))
 
-# ==================== LANGKAH 1: GROUND-STATE SCF PRISTINE ====================
-def scf_ground_state(name):
-    r = rec(name)
-    gpw = WORK / f'{name}.gpw'
-    
+# =============================================================================
+# LANGKAH 1: GROUND-STATE SCF
+# =============================================================================
+def scf_ground_state(name: str) -> None:
+    r   = rec(name)
+    gpw = RESULTS_DIR / f'{name}.gpw'
+
     if gpw.exists() and not FORCE and 'E_total' in r:
-        print(f"✨ [{name}] Ground-state SCF sudah ada (E = {r.get('E_total'):.4f} eV). Dilewati.")
+        print(f"✨ [{name}] SCF sudah ada — E = {r['E_total']:.4f} eV. Dilewati.")
         return
-        
-    a = load_initial(name)
-    print("\n" + "="*70)
-    print(f"🚀 LANGKAH 1: GROUND-STATE SCF {name.upper()} ({len(a)} ATOM C) [TANPA RELAKSASI]")
-    print(f"   Cell lengths: {a.cell.lengths().round(3)} | Mode: {DFT_MODE.upper()}")
-    print("="*70)
-    
-    t0 = time.time()
-    calc = make_calc(a, WORK / f'{name}_scf.txt')
-    a.calc = calc
-    
-    E_tot = float(a.get_potential_energy())
-    F = a.get_forces()
-    fmax = float(np.linalg.norm(F, axis=1).max())
-    frms = float(np.sqrt((F**2).mean()))
-    
-    # Stress tensor (hanya tersedia di PW; di LCAO di-fallback aman)
+
+    atoms = load_cif(name)
+    print(f"\n{'='*70}")
+    print(f"🚀 LANGKAH 1: SCF {name.upper()} ({len(atoms)} atom C) | Mode: {DFT_MODE.upper()}")
+    print(f"   Cell: {atoms.cell.lengths().round(3)} Å")
+    print(f"{'='*70}")
+
+    t0          = time.time()
+    atoms.calc  = make_calc(atoms, RESULTS_DIR / f'{name}_scf.txt')
+    E_tot       = float(atoms.get_potential_energy())
+    F           = atoms.get_forces()
+    fmax        = float(np.linalg.norm(F, axis=1).max())
+    frms        = float(np.sqrt((F**2).mean()))
+
+    # Stress (hanya tersedia di PW; LCAO tidak mendukung → fallback 0)
     try:
-        stress_GPa = [float(x) for x in a.get_stress() / GPa]
-        stress_max = float(np.abs(stress_GPa).max())
+        stress_GPa = [float(x) for x in atoms.get_stress() / GPa]
+        stress_max = float(max(abs(s) for s in stress_GPa))
     except Exception:
         stress_GPa = [0.0] * 6
         stress_max = 0.0
-    
-    r.update(
-        n_atoms=len(a), cell_A=float(a.cell.lengths()[0]),
-        E_total=E_tot, fmax=fmax, frms=frms,
-        stress_GPa=stress_GPa, stress_max_GPa=stress_max,
-        scf_time_s=float(time.time() - t0)
-    )
-    
-    a.calc.write(str(gpw), mode='all')
-    save_res()
-    print(f"✅ [{name}] SCF selesai ({time.time()-t0:.1f} s) | E = {E_tot:.4f} eV | fmax = {fmax:.3f} eV/Å")
 
-# ==================== LANGKAH 2: BAND GAP & DOS ====================
-def gap_dos(name):
-    r = rec(name)
-    gpw = WORK / f'{name}.gpw'
+    elapsed = time.time() - t0
+    r.update(
+        n_atoms=len(atoms),
+        cell_A=float(atoms.cell.lengths()[0]),
+        E_total=E_tot,
+        fmax=fmax,
+        frms=frms,
+        stress_GPa=stress_GPa,
+        stress_max_GPa=stress_max,
+        scf_time_s=round(elapsed, 1),
+    )
+    atoms.calc.write(str(gpw), mode='all')
+    save_res()
+    print(f"✅ [{name}] SCF selesai ({elapsed:.0f} s) | E = {E_tot:.4f} eV | fmax = {fmax:.3f} eV/Å")
+
+# =============================================================================
+# LANGKAH 2: BAND GAP & DOS
+# =============================================================================
+def gap_dos(name: str) -> None:
+    r   = rec(name)
+    gpw = RESULTS_DIR / f'{name}.gpw'
+
     if not gpw.exists():
-        print(f"⚠️ [{name}] {gpw.name} belum ada, jalankan Langkah 1 dulu!")
+        print(f"⚠️  [{name}] File .gpw belum ada — jalankan SCF lebih dulu.")
         return
     if 'gap_indirect' in r and not FORCE:
         print(f"✨ [{name}] Band gap & DOS sudah ada. Dilewati.")
         return
-        
+
     print(f"⚡ [{name}] Menghitung Band Gap & DOS...")
     calc = GPAW(str(gpw), txt=None)
-    ef = float(calc.get_fermi_level())
-    g, _, _ = bandgap(calc, direct=False, efermi=ef)
-    gd, _, _ = bandgap(calc, direct=True, efermi=ef)
-    
+    ef   = float(calc.get_fermi_level())
+    g,  _, _ = bandgap(calc, direct=False, efermi=ef)
+    gd, _, _ = bandgap(calc, direct=True,  efermi=ef)
+
+    # Simpan data DOS numerik → results/
     try:
-        dos = DOS(calc, width=0.1, npts=2000)
-        e, d = dos.get_energies() - ef, dos.get_dos()
-        np.savetxt(str(WORK / f'{name}_dos.dat'), np.c_[e, d], header='E-EF(eV) DOS(states/eV)')
-        
-        # Simpan grafik DOS individu ke figures/
-        fig_dos, ax_dos = plt.subplots(figsize=(6, 4))
-        ax_dos.plot(e, d, color='#1f77b4', lw=1.5)
-        ax_dos.axvline(0, color='red', linestyle='--', alpha=0.7, label=r'$E_F$')
-        ax_dos.set_xlim(-5, 5)
-        ax_dos.set_ylim(bottom=0)
-        ax_dos.set_xlabel(r'$E - E_F$ (eV)', fontweight='bold')
-        ax_dos.set_ylabel('Density of States (states/eV)', fontweight='bold')
-        ax_dos.set_title(f'Electronic DOS — Graphene {name.capitalize()} TPMS', fontweight='bold')
-        ax_dos.grid(True, linestyle=':', alpha=0.6)
-        ax_dos.legend()
+        dos  = DOS(calc, width=0.1, npts=2000)
+        e_   = dos.get_energies() - ef
+        d_   = dos.get_dos()
+        dat_path = RESULTS_DIR / f'{name}_dos.dat'
+        np.savetxt(str(dat_path), np.c_[e_, d_], header='E-EF(eV)  DOS(states/eV)')
+
+        # Plot DOS individu → figures/
+        fig, ax = plt.subplots(figsize=(6, 4))
+        ax.fill_between(e_, d_, alpha=0.25, color='#1f77b4')
+        ax.plot(e_, d_, color='#1f77b4', lw=1.5, label=f'Graphene {name.capitalize()}')
+        ax.axvline(0, color='red', linestyle='--', lw=1.2, alpha=0.8, label=r'$E_F$')
+        ax.set_xlim(-5, 5)
+        ax.set_ylim(bottom=0)
+        ax.set_xlabel(r'$E - E_F$ (eV)', fontweight='bold')
+        ax.set_ylabel('DOS (states/eV)', fontweight='bold')
+        ax.set_title(f'Electronic DOS — Graphene {name.capitalize()} TPMS', fontweight='bold')
+        ax.grid(True, linestyle=':', alpha=0.5)
+        ax.legend()
         plt.tight_layout()
         plt.savefig(str(FIG_DIR / f'dos_{name}.png'), dpi=300)
         plt.close()
+        print(f"   📊 DOS plot tersimpan → figures/dos_{name}.png")
     except Exception as exc:
-        print(f"   [Warn DOS {name}]: {exc}")
-        
+        print(f"   ⚠️  DOS gagal [{name}]: {exc}")
+
     r.update(E_fermi=ef, gap_indirect=float(g), gap_direct=float(gd))
     save_res()
-    print(f"✅ [{name}] E_F={ef:.3f} eV | gap indirect={g:.3f} eV | direct={gd:.3f} eV")
+    print(f"✅ [{name}] E_F = {ef:.3f} eV | gap = {g:.4f} eV (indirect) | {gd:.4f} eV (direct)")
 
-# ==================== LANGKAH 3: ENERGI FORMASI ====================
-def graphene_ref():
+# =============================================================================
+# LANGKAH 3: ENERGI FORMASI (vs flat graphene)
+# =============================================================================
+def graphene_ref() -> float:
+    """Hitung atau ambil cache energi referensi 2D graphene flat."""
     if 'graphene_ref' in RES and not FORCE:
-        return RES['graphene_ref']['E_per_atom']
-    print("📏 Menghitung referensi 2D Graphene...")
-    g = graphene(formula='C2', a=2.46, vacuum=8.0); g.pbc = True
-    g.calc = make_calc(g, WORK / 'graphene_ref.txt', kpts=(6, 6, 1))
-    E = float(g.get_potential_energy() / len(g))
-    RES['graphene_ref'] = {'E_per_atom': E}
+        return float(RES['graphene_ref']['E_per_atom'])
+
+    print("📏 Menghitung referensi energi 2D Graphene (flat)...")
+    g       = graphene(formula='C2', a=2.46, vacuum=8.0)
+    g.pbc   = True
+    g.calc  = make_calc(g, RESULTS_DIR / 'graphene_ref.txt', kpts=(6, 6, 1))
+    E_atom  = float(g.get_potential_energy() / len(g))
+    RES['graphene_ref'] = {'E_per_atom': E_atom}
     save_res()
-    print(f"✅ E(graphene) = {E:.4f} eV/atom")
-    return E
+    print(f"✅ E(graphene) = {E_atom:.4f} eV/atom")
+    return E_atom
 
-def calc_formation_energy(name):
+def calc_formation_energy(name: str) -> None:
+    r    = rec(name)
+    if 'E_form_eV_atom' in r and not FORCE:
+        print(f"✨ [{name}] Energi formasi sudah ada. Dilewati.")
+        return
+    if 'E_total' not in r:
+        print(f"⚠️  [{name}] E_total belum ada — lewati energi formasi.")
+        return
+
     E_gr = graphene_ref()
-    r = rec(name)
-    if 'E_total' in r:
-        r['E_form_eV_atom'] = float(r['E_total'] / r['n_atoms'] - E_gr)
-        save_res()
-        print(f"✅ [{name}] E_form = {r['E_form_eV_atom']:.4f} eV/atom")
+    E_f  = float(r['E_total'] / r['n_atoms'] - E_gr)
+    r['E_form_eV_atom'] = E_f
+    save_res()
+    print(f"✅ [{name}] E_form = {E_f:.4f} eV/atom")
 
-# ==================== LANGKAH 4: ADSORPSI 5 POLISULFIDA ====================
-def free_molecule(mol_name):
-    tag = f'gas_{mol_name}'
-    xyz_path = WORK / f'{tag}.xyz'
+# =============================================================================
+# LANGKAH 4: ADSORPSI 5 POLISULFIDA
+# =============================================================================
+def free_molecule(mol_name: str):
+    """
+    Hitung atau ambil energi fasa gas polysulfida.
+    Struktur diambil dari ADS_DIR (neovius complex), lalu atom non-C diekstrak.
+    """
+    tag      = f'gas_{mol_name}'
+    xyz_path = RESULTS_DIR / f'{tag}.xyz'
+
     if tag in RES and xyz_path.exists() and not FORCE:
-        return read(str(xyz_path)), RES[tag]['E_free']
-    
-    ref_cif = ADS_DIR / f'graphene_neovius_{mol_name}.cif'
-    cplx = read(str(ref_cif))
-    symbols = cplx.get_chemical_symbols()
-    mol_atoms = cplx[[i for i, s in enumerate(symbols) if s != 'C']]
-    mol_atoms.center(vacuum=10.0)
-    mol_atoms.pbc = True
-    
-    print(f"   [Gas DFT] SCF molekul fasa gas: {mol_name} ({mol_atoms.get_chemical_formula()})...")
-    mol_atoms.calc = make_calc(mol_atoms, WORK / f'{tag}_scf.txt', molecule=True)
-    E_free = float(mol_atoms.get_potential_energy())
-    mol_atoms.calc = None
-    write(str(xyz_path), mol_atoms)
-    RES[tag] = {'E_free': E_free, 'formula': mol_atoms.get_chemical_formula()}
+        return read(str(xyz_path)), float(RES[tag]['E_free'])
+
+    ref_cif  = ADS_DIR / f'graphene_neovius_{mol_name}.cif'
+    if not ref_cif.exists():
+        raise FileNotFoundError(f"Tidak ada CIF referensi gas: {ref_cif}")
+
+    cplx     = read(str(ref_cif))
+    syms     = cplx.get_chemical_symbols()
+    mol      = cplx[[i for i, s in enumerate(syms) if s != 'C']]
+    mol.center(vacuum=10.0)
+    mol.pbc  = True
+
+    print(f"   🧪 [Gas SCF] {mol_name} ({mol.get_chemical_formula()})...")
+    mol.calc  = make_calc(mol, RESULTS_DIR / f'{tag}_scf.txt', molecule=True)
+    E_free    = float(mol.get_potential_energy())
+    mol.calc  = None
+    write(str(xyz_path), mol)
+    RES[tag]  = {'E_free': E_free, 'formula': mol.get_chemical_formula()}
     save_res()
     print(f"   ✅ Gas {mol_name}: E = {E_free:.4f} eV")
-    return mol_atoms, E_free
+    return mol, E_free
 
-def adsorb_all_polysulfides(name):
-    r = rec(name)
-    E_host = r.get('E_total')
+def adsorb_all_polysulfides(name: str) -> None:
+    r       = rec(name)
+    E_host  = r.get('E_total')
     if E_host is None:
-        print(f"⚠️ [{name}] E_total host belum ada, lewati adsorpsi.")
+        print(f"⚠️  [{name}] E_total host belum ada — lewati adsorpsi.")
         return
-        
-    print(f"\n🧲 [{name}] Evaluasi Adsorpsi 5 Polisulfida [SINGLE-POINT SCF]")
-    out_eads = {}
+
+    print(f"\n🧲 [{name}] Adsorpsi 5 Polisulfida [Single-Point SCF]")
+    eads_all = {}
+
     for mol in POLYSULFIDES:
-        key = f'Eads_{mol}'
-        cif_out = WORK / f'{name}_{mol}_adsorbed.cif'
+        key     = f'Eads_{mol}'
+        cif_out = RESULTS_DIR / f'{name}_{mol}_adsorbed.cif'
+
+        # Skip jika sudah ada
         if key in r and cif_out.exists() and not FORCE:
-            out_eads[mol] = r[key]
+            print(f"   ✨ [{name}+{mol}] sudah ada → Eads = {r[key]:.3f} eV. Dilewati.")
+            eads_all[mol] = r[key]
             continue
-            
-        _, E_mol_gas = free_molecule(mol)
+
         cplx_cif = ADS_DIR / f'graphene_{name}_{mol}.cif'
         if not cplx_cif.exists():
-            print(f"   ⚠️ {cplx_cif.name} tidak ada!")
+            print(f"   ⚠️  CIF kompleks tidak ada: {cplx_cif.name}")
             continue
-            
-        cplx = read(str(cplx_cif))
-        t0 = time.time()
-        
-        # Single-point SCF terkonfinasi (tanpa relaksasi)
-        cplx.calc = make_calc(cplx, WORK / f'{name}_{mol}_scf.txt')
-        E_cplx = float(cplx.get_potential_energy())
-        E_ads = float(E_cplx - E_host - E_mol_gas)
-        
-        r[key] = E_ads
-        out_eads[mol] = E_ads
-        write(str(cif_out), cplx)
-        save_res()
-        print(f"   ✅ {name} + {mol}: E_ads = {E_ads:.3f} eV ({time.time()-t0:.1f} s)")
-        
-    if out_eads:
-        r['Eads_mean'] = float(np.mean(list(out_eads.values())))
-        r['Eads_best'] = float(min(out_eads.values()))
+
+        try:
+            _, E_gas = free_molecule(mol)
+            cplx     = read(str(cplx_cif))
+            t0       = time.time()
+            cplx.calc = make_calc(cplx, RESULTS_DIR / f'{name}_{mol}_scf.txt')
+            E_cplx   = float(cplx.get_potential_energy())
+            E_ads    = float(E_cplx - E_host - E_gas)
+
+            r[key]          = E_ads
+            eads_all[mol]   = E_ads
+            write(str(cif_out), cplx)
+            save_res()
+            print(f"   ✅ [{name}+{mol}] Eads = {E_ads:.3f} eV ({time.time()-t0:.0f} s)")
+        except Exception as exc:
+            print(f"   ❌ [{name}+{mol}] Error: {exc}")
+
+    # Hitung statistik Eads dari semua 5 polisulfida yang tersedia
+    all_vals = [r[f'Eads_{m}'] for m in POLYSULFIDES if f'Eads_{m}' in r]
+    if all_vals:
+        r['Eads_mean'] = round(float(np.mean(all_vals)), 4)
+        r['Eads_best'] = round(float(min(all_vals)), 4)
         save_res()
 
-# ==================== LANGKAH 5: BULK & SHEAR MODULUS ====================
-def calc_elastic(name):
+# =============================================================================
+# LANGKAH 5: BULK MODULUS (K) & SHEAR MODULUS (G)
+# =============================================================================
+def calc_elastic(name: str) -> None:
     r = rec(name)
     if 'K_VRH' in r and not FORCE:
         print(f"✨ [{name}] Modulus elastisitas sudah ada. Dilewati.")
         return
-        
-    base = load_initial(name)
-    v0 = float(base.get_volume())
-    e0 = float(r.get('E_total', 0.0))
-    
-    # ── METODE 1: LCAO via Birch-Murnaghan EOS & Shear Strain Energy ──
+    if 'E_total' not in r:
+        print(f"⚠️  [{name}] E_total belum ada — lewati elastisitas.")
+        return
+
+    base = load_cif(name)
+    v0   = float(base.get_volume())
+    e0   = float(r['E_total'])
+
+    # ─── METODE LCAO: EOS (Birch-Murnaghan) + Shear Strain Energy ───
     if DFT_MODE == 'lcao':
-        print(f"\n🔩 [{name}] Menghitung Bulk Modulus K (EOS) & Shear Modulus G (Shear Strain)...")
-        # 1. Bulk Modulus K via EOS (5 skala volume)
-        scale_factors = [0.98**(1/3), 0.99**(1/3), 1.00, 1.01**(1/3), 1.02**(1/3)]
+        print(f"\n🔩 [{name}] Menghitung K (EOS) & G (Shear Strain) — LCAO...")
+
+        # ── Bulk Modulus K via 5-point EOS ──
+        # Skala volume: 0.98, 0.99, 1.00, 1.01, 1.02
+        scale_factors = [s**(1/3) for s in [0.98, 0.99, 1.00, 1.01, 1.02]]
         vols, energies = [], []
         for sf in scale_factors:
-            v_s = float(v0 * (sf**3))
+            v_s = float(v0 * sf**3)
             vols.append(v_s)
-            if abs(sf - 1.0) < 1e-4:
+            if abs(sf - 1.0) < 1e-5:
                 energies.append(e0)
             else:
-                at_s = base.copy()
-                at_s.set_cell(at_s.cell * sf, scale_atoms=True)
-                at_s.calc = make_calc(at_s, WORK / f"{name}_eos_sf{sf**3:.3f}.txt")
-                energies.append(float(at_s.get_potential_energy()))
-        
-        # Fit parabola d2E/dV2 -> K = V0 * d2E/dV2 * 160.21766 GPa
-        coeffs = np.polyfit(vols, energies, 2)
-        d2E_dV2 = 2.0 * coeffs[0]
-        K_gpa = float(v0 * d2E_dV2 * 160.21766)
-        
-        # 2. Shear Modulus G via Pure Shear Strain gamma
-        gammas = [-0.015, -0.008, 0.0, 0.008, 0.015]
+                at = base.copy()
+                at.set_cell(at.cell * sf, scale_atoms=True)
+                at.calc = make_calc(at, RESULTS_DIR / f'{name}_eos_sf{sf**3:.3f}.txt')
+                energies.append(float(at.get_potential_energy()))
+
+        # K = V0 * d²E/dV² (konversi eV/Å³ → GPa: × 160.2176)
+        coeffs   = np.polyfit(vols, energies, 2)
+        K_gpa    = float(v0 * 2.0 * coeffs[0] * 160.2176)
+
+        # ── Shear Modulus G via Pure Shear Strain ──
+        gammas   = [-0.015, -0.008, 0.0, 0.008, 0.015]
         e_shears = []
         for g in gammas:
-            if abs(g) < 1e-5:
+            if abs(g) < 1e-8:
                 e_shears.append(0.0)
             else:
-                at_g = base.copy()
-                cell_o = base.cell.copy()
-                sm = np.array([[1.0, g, 0.0], [g, 1.0, 0.0], [0.0, 0.0, 1.0 / (1.0 - g**2)]])
-                at_g.set_cell(cell_o @ sm.T, scale_atoms=True)
-                at_g.calc = make_calc(at_g, WORK / f"{name}_shear_g{g:+.3f}.txt")
-                e_shears.append(float(at_g.get_potential_energy()) - e0)
-                
+                at = base.copy()
+                sm = np.array([[1.0,  g,   0.0],
+                               [g,    1.0, 0.0],
+                               [0.0,  0.0, 1.0 / (1.0 - g**2)]])
+                at.set_cell(base.cell.array @ sm.T, scale_atoms=True)
+                at.calc = make_calc(at, RESULTS_DIR / f'{name}_shear_g{g:+.3f}.txt')
+                e_shears.append(float(at.get_potential_energy()) - e0)
+
         poly_g = np.polyfit(np.array(gammas)**2, e_shears, 1)
-        G_gpa = float(poly_g[0] / (0.5 * v0) * 160.21766)
-        
-        E_young = float(9*K_gpa*G_gpa / (3*K_gpa + G_gpa)) if (3*K_gpa + G_gpa) > 0 else 0.0
-        poisson = float((3*K_gpa - 2*G_gpa) / (2*(3*K_gpa + G_gpa))) if (3*K_gpa + G_gpa) > 0 else 0.0
-        
-        r.update(K_VRH=round(K_gpa, 2), G_VRH=round(G_gpa, 2), E_young=round(E_young, 2), poisson=round(poisson, 3))
+        G_gpa  = float(poly_g[0] / (0.5 * v0) * 160.2176)
+
+        denom   = 3 * K_gpa + G_gpa
+        E_young = float(9 * K_gpa * G_gpa / denom) if denom > 0 else 0.0
+        poisson = float((3 * K_gpa - 2 * G_gpa) / (2 * denom)) if denom > 0 else 0.0
+
+        r.update(K_VRH=round(K_gpa, 2), G_VRH=round(G_gpa, 2),
+                 E_young=round(E_young, 2), poisson=round(poisson, 4))
         save_res()
-        print(f"✅ [{name}] K = {K_gpa:.1f} GPa | G = {G_gpa:.1f} GPa")
+        print(f"✅ [{name}] K = {K_gpa:.1f} GPa | G = {G_gpa:.1f} GPa | E = {E_young:.1f} GPa | ν = {poisson:.3f}")
         return
-        
-    # ── METODE 2: PW via Stress Tensor C_ij ──
-    print(f"\n🔩 [{name}] Menghitung Tensor Elastisitas C_ij (6 arah regangan, Clamped-Ion)...")
+
+    # ─── METODE PW: Tensor Elastisitas C_ij via Stress ───
+    print(f"\n🔩 [{name}] Menghitung Tensor Elastisitas C_ij — PW...")
+
     def strain_mat(j, d):
         e = np.zeros((3, 3))
-        if j < 3: e[j, j] = d
+        if j < 3:
+            e[j, j] = d
         else:
-            a, b = {3: (1, 2), 4: (0, 2), 5: (0, 1)}[j]; e[a, b] = e[b, a] = d / 2
+            a, b = {3: (1, 2), 4: (0, 2), 5: (0, 1)}[j]
+            e[a, b] = e[b, a] = d / 2
         return e
 
     C = np.zeros((6, 6))
     for j in range(6):
-        s = []
+        stresses = []
         for sgn in (+1, -1):
             at = base.copy()
-            at.set_cell(at.cell.array @ (np.eye(3) + strain_mat(j, sgn * ELASTIC_DELTA)).T, scale_atoms=True)
-            at.calc = make_calc(at, WORK / f'{name}_el{j}_{sgn:+d}.txt')
-            s.append(at.get_stress() / GPa)
-        C[:, j] = (s[0] - s[1]) / (2 * ELASTIC_DELTA)
-        
-    C = 0.5 * (C + C.T); S = np.linalg.inv(C)
+            at.set_cell(at.cell.array @ (np.eye(3) + strain_mat(j, sgn * ELASTIC_DELTA)).T,
+                        scale_atoms=True)
+            at.calc = make_calc(at, RESULTS_DIR / f'{name}_el{j}_{sgn:+d}.txt')
+            stresses.append(at.get_stress() / GPa)
+        C[:, j] = (stresses[0] - stresses[1]) / (2 * ELASTIC_DELTA)
+
+    C = 0.5 * (C + C.T)
+    S = np.linalg.inv(C)
     Kv = (C[0,0]+C[1,1]+C[2,2] + 2*(C[0,1]+C[0,2]+C[1,2])) / 9
     Gv = (C[0,0]+C[1,1]+C[2,2] - (C[0,1]+C[0,2]+C[1,2]) + 3*(C[3,3]+C[4,4]+C[5,5])) / 15
-    Kr = 1 / (S[0,0]+S[1,1]+S[2,2] + 2*(S[0,1]+S[0,2]+S[1,2]))
-    Gr = 15 / (4*(S[0,0]+S[1,1]+S[2,2]) - 4*(S[0,1]+S[0,2]+S[1,2]) + 3*(S[3,3]+S[4,4]+S[5,5]))
-    K, G = float((Kv + Kr) / 2), float((Gv + Gr) / 2)
-    
-    r.update(K_VRH=K, G_VRH=G, E_young=float(9*K*G/(3*K+G)), poisson=float((3*K-2*G)/(2*(3*K+G))),
-             C_min_eig=float(np.linalg.eigvalsh(C).min()), C_GPa=C.tolist())
-    save_res()
-    np.savetxt(str(WORK / f'{name}_Cij_GPa.dat'), C, fmt='%9.2f')
-    print(f"✅ [{name}] K = {K:.1f} GPa | G = {G:.1f} GPa | Min eig(C) = {r['C_min_eig']:.1f}")
+    Kr = 1.0 / (S[0,0]+S[1,1]+S[2,2] + 2*(S[0,1]+S[0,2]+S[1,2]))
+    Gr = 15.0 / (4*(S[0,0]+S[1,1]+S[2,2]) - 4*(S[0,1]+S[0,2]+S[1,2]) + 3*(S[3,3]+S[4,4]+S[5,5]))
+    K  = float((Kv + Kr) / 2)
+    G  = float((Gv + Gr) / 2)
 
-# ==================== LANGKAH 6: RINGKASAN & GRAFIK ====================
-def summarize_and_plot():
-    df = pd.DataFrame({k: v for k, v in RES.items() if k in STRUCTS}).T
-    cols_phys = [c for c in ['n_atoms','fmax','gap_indirect','gap_direct','E_form_eV_atom','K_VRH','G_VRH','E_young','poisson'] if c in df.columns]
-    cols_ads = [c for c in [f'Eads_{m}' for m in POLYSULFIDES] + ['Eads_mean', 'Eads_best'] if c in df.columns]
-    
-    summary = df[cols_phys + cols_ads].astype(float).round(3)
-    summary_csv = WORK / 'summary.csv'
-    summary.to_csv(summary_csv)
-    print(f"\n📋 RINGKASAN LENGKAP TERSIMPAN KE: {summary_csv}")
+    denom   = 3 * K + G
+    E_young = float(9 * K * G / denom) if denom > 0 else 0.0
+    poisson = float((3 * K - 2 * G) / (2 * denom)) if denom > 0 else 0.0
+
+    r.update(K_VRH=round(K, 2), G_VRH=round(G, 2),
+             E_young=round(E_young, 2), poisson=round(poisson, 4),
+             C_min_eig=round(float(np.linalg.eigvalsh(C).min()), 2),
+             C_GPa=C.round(2).tolist())
+    save_res()
+    np.savetxt(str(RESULTS_DIR / f'{name}_Cij_GPa.dat'), C, fmt='%9.2f')
+    print(f"✅ [{name}] K = {K:.1f} GPa | G = {G:.1f} GPa | E = {E_young:.1f} GPa | ν = {poisson:.3f}")
+
+# =============================================================================
+# LANGKAH 6: RINGKASAN, EXCEL, & GRAFIK
+# =============================================================================
+def summarize_and_plot() -> None:
+    """Buat ringkasan CSV, laporan Excel multi-sheet, dan grafik DOS + adsorpsi."""
+
+    # ── Bangun DataFrame ringkasan ──
+    tpms_data = {k: v for k, v in RES.items() if k in STRUCTS}
+    if not tpms_data:
+        print("⚠️  Belum ada data TPMS yang selesai.")
+        return
+
+    df = pd.DataFrame(tpms_data).T
+    cols_phys = [c for c in ['n_atoms', 'fmax', 'gap_indirect', 'gap_direct',
+                              'E_form_eV_atom', 'K_VRH', 'G_VRH', 'E_young', 'poisson']
+                 if c in df.columns]
+    cols_ads  = [c for c in [f'Eads_{m}' for m in POLYSULFIDES] + ['Eads_mean', 'Eads_best']
+                 if c in df.columns]
+
+    avail_cols = [c for c in cols_phys + cols_ads if c in df.columns]
+    summary    = df[avail_cols].apply(pd.to_numeric, errors='coerce').round(4)
+    summary.index.name = 'struktur_tpms'
+
+    # ── Simpan CSV ringkasan → results/ ──
+    csv_path = RESULTS_DIR / 'summary.csv'
+    summary.to_csv(csv_path)
+    print(f"\n📋 Ringkasan CSV tersimpan → results/summary.csv")
     print(summary.to_string())
-    
-    # ── Ekspor Laporan Excel Multi-Sheet ke results/ ──
+
+    # ── Ekspor Excel multi-sheet → results/ ──
     try:
-        excel_file = WORK / 'hasil_pure_dft_tpms_polysulfide.xlsx'
-        cols_main = [c for c in ['n_atoms', 'fmax', 'gap_indirect', 'gap_direct', 'E_form_eV_atom', 'K_VRH', 'G_VRH', 'E_young', 'poisson', 'Eads_mean', 'Eads_best'] if c in df.columns]
-        rename_main = {
-            'n_atoms': 'Jumlah Atom (C)',
-            'fmax': 'Gaya Maks (eV/Å)',
-            'gap_indirect': 'Band Gap Indirect (eV)',
-            'gap_direct': 'Band Gap Direct (eV)',
-            'E_form_eV_atom': 'Energi Formasi Ef (eV/atom)',
-            'K_VRH': 'Bulk Modulus K (GPa)',
-            'G_VRH': 'Shear Modulus G (GPa)',
-            'E_young': 'Young Modulus E (GPa)',
-            'poisson': 'Poisson Ratio',
-            'Eads_mean': 'E_ads Rerata (eV)',
-            'Eads_best': 'E_ads Terkuat (eV)'
+        excel_path  = RESULTS_DIR / 'hasil_pure_dft_tpms_polysulfide.xlsx'
+        rename_phys = {
+            'n_atoms':         'Jumlah Atom (C)',
+            'fmax':            'Gaya Maks (eV/Å)',
+            'gap_indirect':    'Band Gap Indirect (eV)',
+            'gap_direct':      'Band Gap Direct (eV)',
+            'E_form_eV_atom':  'Energi Formasi Ef (eV/atom)',
+            'K_VRH':           'Bulk Modulus K (GPa)',
+            'G_VRH':           'Shear Modulus G (GPa)',
+            'E_young':         'Young Modulus E (GPa)',
+            'poisson':         'Poisson Ratio',
+            'Eads_mean':       'E_ads Rerata (eV)',
+            'Eads_best':       'E_ads Terkuat (eV)',
         }
-        df_main = df[cols_main].rename(columns=rename_main).round(4)
+        rename_ads  = {f'Eads_{p}': f'E_ads {p} (eV)' for p in POLYSULFIDES}
+
+        df_main = summary[[c for c in cols_phys + ['Eads_mean', 'Eads_best']
+                           if c in summary.columns]].rename(columns=rename_phys)
         df_main.index.name = 'Struktur TPMS'
-        
-        cols_ads_only = [f'Eads_{p}' for p in POLYSULFIDES if f'Eads_{p}' in df.columns]
-        rename_ads = {f'Eads_{p}': f'E_ads {p} (eV)' for p in POLYSULFIDES}
-        df_ads_table = df[cols_ads_only].rename(columns=rename_ads).round(4)
-        df_ads_table.index.name = 'Struktur TPMS'
-        
-        with pd.ExcelWriter(excel_file, engine='openpyxl') as writer:
+
+        ads_only = [c for c in [f'Eads_{p}' for p in POLYSULFIDES] if c in summary.columns]
+        df_ads   = summary[ads_only].rename(columns=rename_ads)
+        df_ads.index.name = 'Struktur TPMS'
+
+        with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
             df_main.to_excel(writer, sheet_name='5 Sifat Utama')
-            if not df_ads_table.empty:
-                df_ads_table.to_excel(writer, sheet_name='Adsorpsi 5 Polisulfida')
-        print(f"📊 Laporan Excel tersimpan ke: {excel_file}")
+            if not df_ads.empty:
+                df_ads.to_excel(writer, sheet_name='Adsorpsi 5 Polisulfida')
+        print(f"📊 Laporan Excel tersimpan → results/hasil_pure_dft_tpms_polysulfide.xlsx")
     except Exception as exc:
-        print(f"   [Warn Excel Export]: {exc}")
-    
-    # ── Plot Profil Adsorpsi ke figures/ ──
-    ads_cols = [f'Eads_{m}' for m in POLYSULFIDES if f'Eads_{m}' in summary.columns]
-    if ads_cols:
-        fig, ax = plt.subplots(figsize=(8, 4.5))
-        lbls = [c.replace('Eads_', '') for c in ads_cols]
-        for idx, row in summary.iterrows():
-            ax.plot(lbls, [row[c] for c in ads_cols], marker='o', linewidth=2, label=str(idx).upper())
-        ax.axhline(0, color='gray', linestyle='--', alpha=0.7)
-        ax.set_xlabel('Spesies Polisulfida (Siklus Litiasi Redoks)', fontweight='bold')
-        ax.set_ylabel('Energi Adsorpsi E_ads (eV)', fontweight='bold')
+        print(f"   ⚠️  Gagal ekspor Excel: {exc}")
+
+    # ── Grafik Profil Adsorpsi → figures/ ──
+    ads_cols_avail = [c for c in [f'Eads_{m}' for m in POLYSULFIDES] if c in summary.columns]
+    if ads_cols_avail:
+        fig, ax = plt.subplots(figsize=(9, 5))
+        lbls    = [c.replace('Eads_', '') for c in ads_cols_avail]
+        colors  = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']
+        for (idx, row), color in zip(summary.iterrows(), colors):
+            vals = [row[c] for c in ads_cols_avail]
+            ax.plot(lbls, vals, marker='o', linewidth=2.0, label=str(idx).upper(), color=color)
+        ax.axhline(0, color='gray', linestyle='--', alpha=0.6)
+        ax.set_xlabel('Spesies Polisulfida (Siklus Litiasi)', fontweight='bold')
+        ax.set_ylabel('Energi Adsorpsi $E_{ads}$ (eV)', fontweight='bold')
         ax.set_title('Profil Afinitas Penjeratan Polisulfida pada Graphene TPMS', fontweight='bold')
-        ax.grid(True, linestyle=':', alpha=0.6); ax.legend(); plt.tight_layout()
-        plt.savefig(str(FIG_DIR / 'adsorption_profile_5species.png'), dpi=300)
+        ax.grid(True, linestyle=':', alpha=0.5)
+        ax.legend(loc='lower right')
+        plt.tight_layout()
+        out = FIG_DIR / 'adsorption_profile_5species.png'
+        plt.savefig(str(out), dpi=300)
         plt.close()
-        print(f"📊 Grafik Profil Adsorpsi tersimpan ke: {FIG_DIR / 'adsorption_profile_5species.png'}")
-        
-    # ── Plot Komposit DOS Seluruh Struktur ke figures/ ──
-    dos_available = [nm for nm in RUN if (WORK / f'{nm}_dos.dat').exists()]
-    if dos_available:
-        fig, axes = plt.subplots(len(dos_available), 1, figsize=(7, 2.2 * len(dos_available)), sharex=True)
-        if len(dos_available) == 1:
+        print(f"📊 Grafik profil adsorpsi → figures/adsorption_profile_5species.png")
+
+    # ── Grafik DOS Komposit (semua struktur) → figures/ ──
+    dos_files = [(nm, RESULTS_DIR / f'{nm}_dos.dat') for nm in RUN
+                 if (RESULTS_DIR / f'{nm}_dos.dat').exists()]
+    if dos_files:
+        n_panel = len(dos_files)
+        fig, axes = plt.subplots(n_panel, 1, figsize=(7, 2.5 * n_panel), sharex=True)
+        if n_panel == 1:
             axes = [axes]
-        for ax, nm in zip(axes, dos_available):
-            data = np.loadtxt(str(WORK / f'{nm}_dos.dat'))
-            e, d = data[:, 0], data[:, 1]
-            ax.plot(e, d, lw=1.5, color='#2b5c8f', label=f'Graphene {nm.capitalize()}')
-            ax.axvline(0, color='red', linestyle='--', alpha=0.7)
+        colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']
+        for ax, (nm, dat_path), color in zip(axes, dos_files, colors):
+            data = np.loadtxt(str(dat_path))
+            e_, d_ = data[:, 0], data[:, 1]
+            ax.fill_between(e_, d_, alpha=0.2, color=color)
+            ax.plot(e_, d_, lw=1.5, color=color, label=f'Graphene {nm.capitalize()}')
+            ax.axvline(0, color='red', linestyle='--', lw=1.0, alpha=0.8)
             ax.set_xlim(-5, 5)
             ax.set_ylim(bottom=0)
             ax.set_ylabel('DOS (st/eV)', fontsize=9)
-            ax.legend(loc='upper right')
-            ax.grid(True, linestyle=':', alpha=0.6)
+            ax.legend(loc='upper right', fontsize=9)
+            ax.grid(True, linestyle=':', alpha=0.4)
         axes[-1].set_xlabel(r'$E - E_F$ (eV)', fontweight='bold')
+        plt.suptitle('Density of States — 5 Graphene TPMS', fontweight='bold', y=1.01)
         plt.tight_layout()
-        plt.savefig(str(FIG_DIR / 'dos_all.png'), dpi=300)
+        out = FIG_DIR / 'dos_all.png'
+        plt.savefig(str(out), dpi=300, bbox_inches='tight')
         plt.close()
-        print(f"📊 Grafik DOS Komposit tersimpan ke: {FIG_DIR / 'dos_all.png'}")
+        print(f"📊 Grafik DOS komposit → figures/dos_all.png")
 
-# ==================== MAIN EXECUTION ====================
+# =============================================================================
+# MAIN
+# =============================================================================
 if __name__ == '__main__':
-    print("="*80)
+    print("=" * 80)
     print("🚀 MASTER DFT GPAW RUNNER [SINGLE-POINT — TANPA RELAKSASI]")
-    print(f"   Struktur: {RUN}")
-    print(f"   Mode    : {DFT_MODE.upper()}")
-    print(f"   Output  : {WORK}")
-    print("="*80)
-    
+    print(f"   Struktur  : {RUN}")
+    print(f"   Mode DFT  : {DFT_MODE.upper()}")
+    print(f"   Results   : {RESULTS_DIR}")
+    print(f"   Figures   : {FIG_DIR}")
+    print("=" * 80)
+
     for nm in RUN:
-        print(f"\n>>> MEMPROSES STRUKTUR TPMS: {nm.upper()} <<<")
+        print(f"\n{'>'*5} MEMPROSES: {nm.upper()} {'<'*5}")
         scf_ground_state(nm)
         gap_dos(nm)
         calc_formation_energy(nm)
         adsorb_all_polysulfides(nm)
         calc_elastic(nm)
-        
+
     summarize_and_plot()
-    print("\n🏁 SELURUH PERHITUNGAN DFT 5 TPMS & 5 POLISULFIDA SELESAI!")
+    print("\n🏁 SEMUA KALKULASI DFT 5 TPMS & 5 POLISULFIDA SELESAI!")
