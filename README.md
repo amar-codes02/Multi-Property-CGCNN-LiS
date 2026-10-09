@@ -33,8 +33,13 @@ $$\mathbf{y} = \begin{bmatrix} E_f & E_g & K_{VRH} & G_{VRH} & E_{ads} \end{bmat
 
 ```
 Multi-Property-CGCNN-LiS/
-├── notebook/                                # [CGCNN RESEARCH NOTEBOOK]
-│   └── Thesis_Principle_Discovery.ipynb     # Main primary thesis research notebook
+├── notebook/                                # [CGCNN RESEARCH NOTEBOOK & FIGURES]
+│   ├── Thesis_Principle_Discovery.ipynb     # Main primary thesis research notebook
+│   └── figures/                             # High-resolution figures hasil analisis CGCNN (300 DPI)
+│       ├── eda_*.png                        # Distribusi 5 target fisis & korelasi multivariat
+│       ├── parity_plots_*.png               # Evaluasi akurasi prediksi model CGCNN
+│       ├── tpms_pd_*.png                    # Karakterisasi 5 sifat & radar chart 5D graphene TPMS
+│       └── visualisasi_*.png                # Visualisasi penampang pori saluran 3D TPMS
 ├── data/                                    # Datasets, splits, and atomic embeddings
 │   ├── atom_init.json                       # 92-dim CGCNN elemental feature vectors
 │   ├── catalyst_principle_discovery_5targets.csv # 1,366 samples training dataset
@@ -42,9 +47,6 @@ Multi-Property-CGCNN-LiS/
 │   └── *.csv                                # Prediction results and rankings
 ├── models/                                  # Trained PyTorch model checkpoints
 │   └── cgcnn_finetuned_dft_tpms.pt          # Fine-tuned weights aligned to DFT GPAW
-├── figures/                                 # High-resolution publication figures (300 DPI)
-│   ├── tpms_pd_pristine_characterization.png# Multi-panel intrinsic property charts
-│   └── tpms_pd_5d_radar_chart.png           # 5D composite radar utility chart
 ├── graphene_tpms/                           # 5 Pristine 3D Graphene TPMS unit cells (.cif)
 │   ├── graphene_sheet_diamond.cif
 │   ├── graphene_sheet_gyroid.cif
