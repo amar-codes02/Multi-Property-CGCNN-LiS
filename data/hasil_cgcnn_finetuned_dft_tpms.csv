@@ -1,0 +1,6 @@
+Topology,Baseline_ML_Ef (Materials Project frame) [eV/atom],GroundTruth_DFT_Ef (2D Graphene frame) [eV/atom],FineTuned_CGCNN_Ef (Aligned to DFT) [eV/atom],Residual_Error (|DFT - FineTuned|) [eV/atom]
+Primitive,-0.081,2.0228,2.6389,0.6161
+IWP,-0.381,2.379,2.0959,0.2831
+Gyroid,-0.21,2.6601,2.2466,0.4135
+Neovius,-0.549,2.9809,2.55,0.4309
+Diamond,-0.293,3.235,3.1233,0.1117
