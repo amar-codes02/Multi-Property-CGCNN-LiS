@@ -48,15 +48,20 @@ RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 FIG_DIR.mkdir(parents=True, exist_ok=True)
 
 # Cari folder CIF pristine TPMS
+# Prioritas: repo/graphene_tpms/ → symlink di HPC → path absolut HPC
 _cif_cands = [
-    SCRIPT_DIR.parent / 'graphene_tpms',
-    Path('/media/user/uid1083/graphene_tpms'),
+    SCRIPT_DIR.parent / 'graphene_tpms',          # repo lokal: cgcnn_data_multiproperty/graphene_tpms
+    SCRIPT_DIR / 'graphene_tpms',                  # fallback: dft/graphene_tpms (jika ada symlink)
+    Path('/media/user/uid1083/graphene_tpms'),      # path absolut HPC
     Path('/home/user/Amarus/cgcnn_data_multiproperty/graphene_tpms'),
-    Path('graphene_tpms'),
 ]
 CIF_DIR = next((p for p in _cif_cands if (p / 'graphene_sheet_neovius.cif').exists()), None)
 if CIF_DIR is None:
-    raise FileNotFoundError("Folder graphene_tpms tidak ditemukan! Periksa path CIF_DIR.")
+    raise FileNotFoundError(
+        "Folder graphene_tpms tidak ditemukan!\n"
+        "Pastikan folder 'graphene_tpms' ada di root repo (satu level di atas dft/).\n"
+        f"Script ini berada di: {SCRIPT_DIR}"
+    )
 
 # Cari folder CIF adsorbat polysulfida
 _ads_cands = [
