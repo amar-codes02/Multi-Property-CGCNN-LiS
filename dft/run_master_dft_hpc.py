@@ -31,7 +31,15 @@ from ase import Atoms
 from gpaw import GPAW, PW, FermiDirac
 
 # ------------------------- DETEKSI DIREKTORI -------------------------
+SCRIPT_DIR = Path(__file__).resolve().parent
+RESULTS_DIR = SCRIPT_DIR / 'results'
+FIG_DIR = SCRIPT_DIR / 'figures'
+RESULTS_DIR.mkdir(exist_ok=True, parents=True)
+FIG_DIR.mkdir(exist_ok=True, parents=True)
+WORK = RESULTS_DIR
+
 cif_cands = [
+    SCRIPT_DIR.parent / 'graphene_tpms',
     Path('/media/user/uid1083/graphene_tpms'),
     Path('/home/user/Amarus/cgcnn_data_multiproperty/graphene_tpms'),
     Path('graphene_tpms'),
@@ -40,20 +48,14 @@ cif_cands = [
 CIF_DIR = next((p for p in cif_cands if (p / 'graphene_sheet_neovius.cif').exists()), Path('.'))
 
 ads_cands = [
+    SCRIPT_DIR.parent / 'cifs_graphene_tpms_adsorbate',
     Path('/media/user/uid1083/cifs_graphene_tpms_adsorbate'),
     Path('/home/user/Amarus/cgcnn_data_multiproperty/cifs_graphene_tpms_adsorbate'),
     Path('../cifs_graphene_tpms_adsorbate'),
-    Path('cifs_graphene_tpms_adsorbate')
+    Path('cifs_graphene_tpms_adsorbate'),
+    Path('.')
 ]
 ADS_DIR = next((p for p in ads_cands if (p / 'graphene_neovius_S8.cif').exists()), Path('.'))
-
-work_cands = [
-    Path('/media/user/uid1083/dft_gpaw_graphene_tpms_testing/results'),
-    Path('/home/user/Amarus/cgcnn_data_multiproperty/dft_gpaw_graphene_tpms_testing/results'),
-    Path('results')
-]
-WORK = next((p for p in work_cands if p.parent.exists()), Path('results'))
-WORK.mkdir(exist_ok=True, parents=True)
 
 RES_FILE = WORK / 'results.json'
 RES = json.loads(RES_FILE.read_text()) if RES_FILE.exists() else {}
@@ -161,6 +163,21 @@ def gap_dos(name):
         dos = DOS(calc, width=0.1, npts=2000)
         e, d = dos.get_energies() - ef, dos.get_dos()
         np.savetxt(str(WORK / f'{name}_dos.dat'), np.c_[e, d], header='E-EF(eV) DOS(states/eV)')
+        
+        # Simpan grafik DOS individu ke figures/
+        fig_dos, ax_dos = plt.subplots(figsize=(6, 4))
+        ax_dos.plot(e, d, color='#1f77b4', lw=1.5)
+        ax_dos.axvline(0, color='red', linestyle='--', alpha=0.7, label=r'$E_F$')
+        ax_dos.set_xlim(-5, 5)
+        ax_dos.set_ylim(bottom=0)
+        ax_dos.set_xlabel(r'$E - E_F$ (eV)', fontweight='bold')
+        ax_dos.set_ylabel('Density of States (states/eV)', fontweight='bold')
+        ax_dos.set_title(f'Electronic DOS — Graphene {name.capitalize()} TPMS', fontweight='bold')
+        ax_dos.grid(True, linestyle=':', alpha=0.6)
+        ax_dos.legend()
+        plt.tight_layout()
+        plt.savefig(str(FIG_DIR / f'dos_{name}.png'), dpi=300)
+        plt.close()
     except Exception as exc:
         print(f"   [Warn DOS {name}]: {exc}")
         
@@ -356,6 +373,40 @@ def summarize_and_plot():
     print(f"\n📋 RINGKASAN LENGKAP TERSIMPAN KE: {summary_csv}")
     print(summary.to_string())
     
+    # ── Ekspor Laporan Excel Multi-Sheet ke results/ ──
+    try:
+        excel_file = WORK / 'hasil_pure_dft_tpms_polysulfide.xlsx'
+        cols_main = [c for c in ['n_atoms', 'fmax', 'gap_indirect', 'gap_direct', 'E_form_eV_atom', 'K_VRH', 'G_VRH', 'E_young', 'poisson', 'Eads_mean', 'Eads_best'] if c in df.columns]
+        rename_main = {
+            'n_atoms': 'Jumlah Atom (C)',
+            'fmax': 'Gaya Maks (eV/Å)',
+            'gap_indirect': 'Band Gap Indirect (eV)',
+            'gap_direct': 'Band Gap Direct (eV)',
+            'E_form_eV_atom': 'Energi Formasi Ef (eV/atom)',
+            'K_VRH': 'Bulk Modulus K (GPa)',
+            'G_VRH': 'Shear Modulus G (GPa)',
+            'E_young': 'Young Modulus E (GPa)',
+            'poisson': 'Poisson Ratio',
+            'Eads_mean': 'E_ads Rerata (eV)',
+            'Eads_best': 'E_ads Terkuat (eV)'
+        }
+        df_main = df[cols_main].rename(columns=rename_main).round(4)
+        df_main.index.name = 'Struktur TPMS'
+        
+        cols_ads_only = [f'Eads_{p}' for p in POLYSULFIDES if f'Eads_{p}' in df.columns]
+        rename_ads = {f'Eads_{p}': f'E_ads {p} (eV)' for p in POLYSULFIDES}
+        df_ads_table = df[cols_ads_only].rename(columns=rename_ads).round(4)
+        df_ads_table.index.name = 'Struktur TPMS'
+        
+        with pd.ExcelWriter(excel_file, engine='openpyxl') as writer:
+            df_main.to_excel(writer, sheet_name='5 Sifat Utama')
+            if not df_ads_table.empty:
+                df_ads_table.to_excel(writer, sheet_name='Adsorpsi 5 Polisulfida')
+        print(f"📊 Laporan Excel tersimpan ke: {excel_file}")
+    except Exception as exc:
+        print(f"   [Warn Excel Export]: {exc}")
+    
+    # ── Plot Profil Adsorpsi ke figures/ ──
     ads_cols = [f'Eads_{m}' for m in POLYSULFIDES if f'Eads_{m}' in summary.columns]
     if ads_cols:
         fig, ax = plt.subplots(figsize=(8, 4.5))
@@ -367,9 +418,31 @@ def summarize_and_plot():
         ax.set_ylabel('Energi Adsorpsi E_ads (eV)', fontweight='bold')
         ax.set_title('Profil Afinitas Penjeratan Polisulfida pada Graphene TPMS', fontweight='bold')
         ax.grid(True, linestyle=':', alpha=0.6); ax.legend(); plt.tight_layout()
-        plt.savefig(str(WORK / 'adsorption_profile_5species.png'), dpi=200)
+        plt.savefig(str(FIG_DIR / 'adsorption_profile_5species.png'), dpi=300)
         plt.close()
-        print(f"📊 Grafik Profil Adsorpsi tersimpan ke: {WORK / 'adsorption_profile_5species.png'}")
+        print(f"📊 Grafik Profil Adsorpsi tersimpan ke: {FIG_DIR / 'adsorption_profile_5species.png'}")
+        
+    # ── Plot Komposit DOS Seluruh Struktur ke figures/ ──
+    dos_available = [nm for nm in RUN if (WORK / f'{nm}_dos.dat').exists()]
+    if dos_available:
+        fig, axes = plt.subplots(len(dos_available), 1, figsize=(7, 2.2 * len(dos_available)), sharex=True)
+        if len(dos_available) == 1:
+            axes = [axes]
+        for ax, nm in zip(axes, dos_available):
+            data = np.loadtxt(str(WORK / f'{nm}_dos.dat'))
+            e, d = data[:, 0], data[:, 1]
+            ax.plot(e, d, lw=1.5, color='#2b5c8f', label=f'Graphene {nm.capitalize()}')
+            ax.axvline(0, color='red', linestyle='--', alpha=0.7)
+            ax.set_xlim(-5, 5)
+            ax.set_ylim(bottom=0)
+            ax.set_ylabel('DOS (st/eV)', fontsize=9)
+            ax.legend(loc='upper right')
+            ax.grid(True, linestyle=':', alpha=0.6)
+        axes[-1].set_xlabel(r'$E - E_F$ (eV)', fontweight='bold')
+        plt.tight_layout()
+        plt.savefig(str(FIG_DIR / 'dos_all.png'), dpi=300)
+        plt.close()
+        print(f"📊 Grafik DOS Komposit tersimpan ke: {FIG_DIR / 'dos_all.png'}")
 
 # ==================== MAIN EXECUTION ====================
 if __name__ == '__main__':
