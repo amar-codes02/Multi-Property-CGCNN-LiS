@@ -5,14 +5,14 @@ __pycache__/
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
-# Large DFT wavefunctions and HPC logs
+# Large DFT wavefunctions and HPC logs (>100MB)
 *.gpw
 *.gpw.txt
-dft_gpaw_graphene_tpms_testing/
-dft/
 *.log
 sync.log
 results_backup_pw/
+dft/results/*.gpw
+dft/results/*.txt
 
 # System and IDE
 .DS_Store
