@@ -1,0 +1,6 @@
+Topology,Carbon_Atoms,Volume (A^3),Packing_Fraction,Formation energy (eV/atom),Band gap (eV),Bulk modulus (GPa),Shear modulus (GPa),Adsorption energy (eV)
+Diamond,332,2762.69,0.23,3.235,0.0,182.1,94.69,3.25
+Gyroid,244,2527.53,0.185,2.6601,0.0,168.4,87.57,3.425
+IWP,228,2013.01,0.217,2.379,0.0,152.6,79.35,3.12
+Neovius,188,1829.06,0.197,2.9809,0.0,145.2,75.5,2.88
+Primitive,200,3092.51,0.124,2.0228,0.0,138.9,72.23,2.98
