@@ -33,10 +33,8 @@ $$\mathbf{y} = \begin{bmatrix} E_f & E_g & K_{VRH} & G_{VRH} & E_{ads} \end{bmat
 
 ```
 Multi-Property-CGCNN-LiS/
-├── notebook/                                # [CGCNN RESEARCH NOTEBOOKS]
-│   ├── Thesis_Principle_Discovery.ipynb     # Main primary thesis research notebook
-│   ├── Fine_Tuning_CGCNN_with_DFT_GroundTruth.ipynb # Transfer Learning & DFT alignment
-│   └── Thesis_Graphene_TPMS_Positive_Ef.ipynb # Standalone positive Ef characterization
+├── notebook/                                # [CGCNN RESEARCH NOTEBOOK]
+│   └── Thesis_Principle_Discovery.ipynb     # Main primary thesis research notebook
 ├── data/                                    # Datasets, splits, and atomic embeddings
 │   ├── atom_init.json                       # 92-dim CGCNN elemental feature vectors
 │   ├── catalyst_principle_discovery_5targets.csv # 1,366 samples training dataset
@@ -59,17 +57,15 @@ Multi-Property-CGCNN-LiS/
 │   └── restore_cif_files_pd.py              # Script to verify and restore dataset CIFs
 │
 └── dft/                                     # [FIRST-PRINCIPLES DFT QUANTUM CALCULATIONS]
-    ├── run_master_dft_hpc.py                # Standalone master Python script running on HPC
-    ├── tpms_gpaw.ipynb                      # Interactive DFT GPAW execution notebook
-    ├── results.json                         # Ground-truth DFT results (JSON)
-    ├── export_to_excel.py                   # Automated multi-sheet Excel report generator
-    ├── sync_hpc_results.sh                  # 1-click rsync synchronization from HPC
-    ├── figures/                             # Density of States (DOS) publication plots
-    ├── results/                             # Raw DFT output logs, DOS data, and structures
-    │   ├── hasil_pure_dft_tpms_polysulfide.xlsx # Comprehensive Excel report
-    │   ├── *_dos.dat                        # DOS numerical data
-    │   └── *_adsorbed.cif                   # Adsorbed geometry complexes
-    └── README.md                            # Detailed documentation on HPC workflow
+    ├── run_master_dft_hpc.py                # Kode Python yang dijalankan di HPC
+    ├── figures/                             # Folder figure dari DFT (DOS plots)
+    │   ├── dos_all.png                      # Visualisasi DOS perbandingan seluruh struktur
+    │   └── dos_*.png                        # Individual DOS plots (Diamond, Gyroid, IWP, Neovius, Primitive)
+    └── results/                             # Hasil kalkulasi DFT (energi, struktur, data DOS)
+        ├── hasil_pure_dft_tpms_polysulfide.xlsx # Rekapitulasi Excel hasil DFT
+        ├── results.json                     # Ground-truth DFT results (JSON)
+        ├── *_dos.dat                        # DOS numerical data
+        └── *_adsorbed.cif                   # Adsorbed geometry complexes
 ```
 
 ---
